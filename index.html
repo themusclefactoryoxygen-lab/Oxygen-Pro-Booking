@@ -21,7 +21,7 @@
             --oxy-surface: #1e293b; 
             --oxy-text-main: #f1f5f9;
             --oxy-text-muted: #94a3b8;
-            --oxy-border: rgba(255, 255, 255, 0.08);
+            --oxy-border: rgba(255, 255, 255, 0.1);
         }
 
         body {
@@ -30,44 +30,51 @@
             color: var(--oxy-text-main);
             -webkit-tap-highlight-color: transparent;
             overflow-x: hidden;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .glass-panel {
-            background: rgba(30, 41, 59, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--oxy-border);
         }
 
         .sidebar-item {
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .sidebar-item.active {
             background: var(--oxy-primary);
             color: white;
-            box-shadow: 0 10px 15px -5px rgba(14, 165, 233, 0.4);
+            box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.4);
         }
 
+        /* Fixed Slot Card Alignment - Prevents Overlap */
         .slot-card {
             background: #334155;
             border: 1px solid var(--oxy-border);
             color: var(--oxy-text-main);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 60px;
+            height: 64px; /* Fixed Height for Symmetry */
+            font-size: 0.7rem;
+            font-weight: 800;
+            white-space: nowrap;
+            border-radius: 14px;
+            padding: 4px;
+            text-align: center;
+            width: 100%;
         }
 
         .slot-card.selected {
             background: var(--oxy-primary);
             color: white;
             border-color: transparent;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px -3px rgba(14, 165, 233, 0.3);
+            transform: scale(0.96);
         }
 
         .slot-card.occupied {
@@ -76,24 +83,19 @@
             border-color: transparent;
             cursor: not-allowed;
             pointer-events: none;
-            opacity: 0.4;
+            opacity: 0.5;
         }
 
         .premium-card {
             background: var(--oxy-surface);
-            border-radius: 24px;
+            border-radius: 28px;
             border: 1px solid var(--oxy-border);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
+            transition: transform 0.3s ease, border-color 0.3s ease;
         }
 
         .premium-card:hover {
             border-color: rgba(14, 165, 233, 0.3);
         }
-
-        .logo-ring { animation: rotate-slow 20s linear infinite; }
-        @keyframes rotate-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         #loading-screen {
             position: fixed; inset: 0; background: #0f172a; z-index: 1000;
@@ -105,7 +107,11 @@
             border: 1px solid var(--oxy-border) !important;
             color: white !important;
             outline: none;
-            transition: border-color 0.2s ease;
+            transition: all 0.2s ease;
+            height: 52px;
+            border-radius: 12px;
+            padding: 0 16px;
+            width: 100%;
         }
 
         input:focus, select:focus {
@@ -121,62 +127,59 @@
         }
 
         .edited-badge {
-            background: rgba(245, 158, 11, 0.15);
-            color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            font-size: 0.65rem;
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
             padding: 2px 6px;
             border-radius: 4px;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            font-weight: 900;
         }
 
-        .report-tab-active {
-            background: var(--oxy-primary);
-            color: white;
-            box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2);
-        }
-
-        /* Fixed Table Headings Alignment */
-        th {
-            white-space: nowrap;
-        }
+        .table-cell-left { text-align: left !important; padding-left: 1.5rem !important; }
+        .table-cell-center { text-align: center !important; }
+        .table-cell-right { text-align: right !important; padding-right: 1.5rem !important; font-variant-numeric: tabular-nums; }
     </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen">
 
     <!-- Loading Screen -->
     <div id="loading-screen">
-        <svg class="w-16 h-16 mb-4 logo-ring" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="45" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-dasharray="8 8" />
-            <circle cx="50" cy="50" r="35" fill="none" stroke="#38bdf8" stroke-width="3" />
+        <svg class="w-20 h-20 mb-4" viewBox="0 0 100 100">
+            <!-- Bat -->
+            <rect x="45" y="10" width="10" height="60" rx="2" fill="#0ea5e9" transform="rotate(-15 50 50)" />
+            <!-- Ball -->
+            <circle cx="65" cy="75" r="8" fill="#ef4444" />
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="10 5" class="animate-spin" style="transform-origin: center;" />
         </svg>
-        <p class="text-[10px] font-black text-sky-400 uppercase tracking-[0.4em] animate-pulse">Oxygen Pro Engine</p>
+        <p class="text-[10px] font-black text-sky-400 uppercase tracking-[0.4em] animate-pulse">Oxygen Pro Arena</p>
     </div>
 
     <!-- Mobile Top Header -->
     <header class="md:hidden glass-panel fixed top-0 w-full h-16 z-[60] px-5 flex items-center justify-between border-b border-white/5">
         <div class="flex items-center gap-2">
             <svg viewBox="0 0 100 100" class="w-8 h-8">
-                <path d="M50 10 C30 10 10 30 10 50 C10 70 30 90 50 90 C70 90 90 70 90 50 C90 30 70 10 50 10 Z" fill="none" stroke="#0ea5e9" stroke-width="8"/>
-                <circle cx="50" cy="50" r="15" fill="#0ea5e9"/>
+                <rect x="40" y="10" width="12" height="65" rx="2" fill="#0ea5e9" transform="rotate(-20 50 50)" />
+                <circle cx="65" cy="70" r="10" fill="#ef4444" />
             </svg>
-            <span class="font-black text-xl tracking-tighter">OXYGEN<span class="text-sky-500">PRO</span></span>
+            <span class="font-black text-xl tracking-tighter uppercase">Oxygen<span class="text-sky-500">Pro</span></span>
         </div>
-        <button onclick="window.openGoogleReview()" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-sky-400">
-            <i class="fab fa-google"></i>
+        <button onclick="window.openGoogleReview()" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-sky-400 border border-white/5">
+            <i class="fab fa-google text-lg"></i>
         </button>
     </header>
 
     <!-- Sidebar (Desktop) -->
     <aside class="hidden md:flex flex-col w-80 bg-[#1e293b] border-r border-white/5 sticky top-0 h-screen z-50">
-        <div class="p-8">
+        <div class="p-8 text-left">
             <div class="flex items-center gap-3 mb-2">
-                <svg viewBox="0 0 100 100" class="w-10 h-10">
-                    <path d="M50 10 C30 10 10 30 10 50 C10 70 30 90 50 90 C70 90 90 70 90 50 C90 30 70 10 50 10 Z" fill="none" stroke="#0ea5e9" stroke-width="8"/>
-                    <circle cx="50" cy="50" r="15" fill="#0ea5e9"/>
+                <svg viewBox="0 0 100 100" class="w-12 h-12">
+                    <rect x="40" y="10" width="12" height="65" rx="2" fill="#0ea5e9" transform="rotate(-20 50 50)" />
+                    <circle cx="70" cy="75" r="10" fill="#ef4444" />
                 </svg>
                 <div>
                     <span class="text-xl font-black tracking-tighter text-white block leading-none">OXYGEN<span class="text-sky-500">PRO</span></span>
-                    <span class="text-[9px] text-sky-400/50 font-bold uppercase tracking-widest block">Elite Turf Engine</span>
+                    <span class="text-[9px] text-sky-400/50 font-bold uppercase tracking-widest block">Lingrajpuram Arena</span>
                 </div>
             </div>
         </div>
@@ -218,7 +221,7 @@
     </aside>
 
     <!-- Main Content Area -->
-    <main class="flex-grow p-5 md:p-12 pt-24 md:pt-12 pb-32 md:pb-12 overflow-y-auto max-h-screen no-scrollbar">
+    <main class="flex-grow p-4 md:p-12 pt-24 md:pt-12 pb-32 md:pb-12 overflow-y-auto max-h-screen no-scrollbar">
         
         <!-- Dashboard Overview -->
         <section id="dashboard-section" class="max-w-7xl mx-auto space-y-8">
@@ -230,36 +233,36 @@
             </div>
 
             <!-- Stats Grid -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                <div class="premium-card p-6 items-center md:items-start text-center md:text-left">
-                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Gross Revenue</p>
-                    <h3 id="stat-revenue" class="text-2xl sm:text-3xl font-black text-white tracking-tighter">₹0</h3>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 text-center">
+                <div class="premium-card p-6 flex flex-col items-center justify-center">
+                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Period Revenue</p>
+                    <h3 id="stat-revenue" class="text-xl sm:text-3xl font-black text-white tracking-tighter">₹0</h3>
                 </div>
-                <div class="premium-card p-6 border-b-4 border-b-emerald-500 items-center md:items-start text-center md:text-left">
-                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Net Cashflow</p>
-                    <h3 id="stat-profit" class="text-2xl sm:text-3xl font-black text-white tracking-tighter">₹0</h3>
+                <div class="premium-card p-6 border-b-4 border-b-emerald-500 flex flex-col items-center justify-center">
+                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Net Cashflow</p>
+                    <h3 id="stat-profit" class="text-xl sm:text-3xl font-black text-white tracking-tighter">₹0</h3>
                 </div>
-                <div class="premium-card p-6 items-center md:items-start text-center md:text-left">
-                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Popular Slot</p>
+                <div class="premium-card p-6 flex flex-col items-center justify-center">
+                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Hot Slot</p>
                     <h3 id="stat-hot-slot" class="text-lg font-black text-sky-400 uppercase">--</h3>
                 </div>
-                <div class="premium-card p-6 items-center md:items-start text-center md:text-left">
-                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Elite Discounts</p>
-                    <h3 id="stat-savings" class="text-2xl sm:text-3xl font-black text-emerald-400 tracking-tighter">₹0</h3>
+                <div class="premium-card p-6 flex flex-col items-center justify-center text-emerald-400">
+                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Savings</p>
+                    <h3 id="stat-savings" class="text-xl sm:text-3xl font-black tracking-tighter">₹0</h3>
                 </div>
             </div>
 
-            <!-- Dashboard Analytics Bottom -->
+            <!-- Analytics Bottom -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 premium-card p-6 md:p-8">
                     <h4 class="text-lg font-black text-white mb-6 tracking-tight flex items-center justify-center md:justify-start gap-2">
-                        <i class="fas fa-bolt text-sky-500"></i> Recent Activity
+                        <i class="fas fa-history text-sky-500"></i> Recent Activity
                     </h4>
                     <div id="recent-sales" class="space-y-3"></div>
                 </div>
                 <div class="lg:col-span-1 premium-card p-6 md:p-8">
                     <h4 class="text-lg font-black text-white mb-6 flex items-center justify-center md:justify-start gap-3">
-                        <i class="fas fa-crown text-amber-400"></i> Frequent Players
+                        <i class="fas fa-crown text-amber-400"></i> Elite Players
                     </h4>
                     <div id="top-customers" class="space-y-3"></div>
                 </div>
@@ -268,39 +271,39 @@
 
         <!-- New Booking Section -->
         <section id="sales-section" class="hidden max-w-5xl mx-auto space-y-6">
-            <div class="flex items-center justify-between px-2">
+            <div class="flex items-center justify-between px-2 text-center sm:text-left">
                 <div class="flex items-center gap-4">
                     <button onclick="showSection('dashboard')" class="w-10 h-10 bg-[#1e293b] rounded-xl flex items-center justify-center border border-white/5 text-slate-400"><i class="fas fa-chevron-left"></i></button>
                     <h1 id="booking-title" class="text-2xl font-black text-white tracking-tight">Create Booking</h1>
                 </div>
-                <button id="cancel-edit-btn" onclick="cancelEdit()" class="hidden text-rose-400 text-[10px] font-black uppercase border border-rose-400/20 px-3 py-2 rounded-lg">Cancel Edit</button>
+                <button id="cancel-edit-btn" onclick="cancelEdit()" class="hidden text-rose-400 text-[10px] font-black uppercase border border-rose-400/20 px-3 py-2 rounded-lg">Cancel Correction</button>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 text-center sm:text-left">
                 <div class="lg:col-span-2 space-y-6">
                     <div class="premium-card p-6 md:p-10">
                         <div class="flex justify-between items-center mb-8">
-                            <h3 class="text-xl font-black text-white">Booking Details</h3>
+                            <h3 class="text-xl font-black text-white">Booking Info</h3>
                             <div id="loyalty-alert" class="hidden bg-emerald-500 text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">LOYALTY PLAYER</div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10 text-center sm:text-left">
-                            <div class="flex flex-col">
-                                <label class="text-[10px] font-black text-slate-500 uppercase ml-1 mb-1">Team/Captain Name</label>
-                                <input type="text" id="cust-name" placeholder="Enter Name" class="w-full px-5 py-4 rounded-xl font-bold">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10 text-left">
+                            <div class="flex flex-col gap-1">
+                                <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Team/Captain Name</label>
+                                <input type="text" id="cust-name" placeholder="Enter Name">
                             </div>
-                            <div class="flex flex-col">
-                                <label class="text-[10px] font-black text-slate-500 uppercase ml-1 mb-1">Mobile Number</label>
-                                <input type="tel" id="cust-mobile" oninput="checkLoyalty(this.value)" placeholder="91xxxxxxxx" class="w-full px-5 py-4 rounded-xl font-bold">
+                            <div class="flex flex-col gap-1">
+                                <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Mobile Number</label>
+                                <input type="tel" id="cust-mobile" oninput="checkLoyalty(this.value)" placeholder="91xxxxxxxx">
                             </div>
-                            <div class="flex flex-col">
-                                <label class="text-[10px] font-black text-slate-500 uppercase ml-1 mb-1">Match Date</label>
-                                <input type="date" id="sale-date" onchange="renderSlots()" class="w-full px-5 py-4 rounded-xl font-black">
+                            <div class="flex flex-col gap-1">
+                                <label class="text-[10px] font-black text-sky-400 uppercase ml-1">Booking Date</label>
+                                <input type="date" id="sale-date" onchange="renderSlots()" class="font-black border-sky-400/30">
                             </div>
-                            <div class="flex flex-col">
-                                <label class="text-[10px] font-black text-slate-500 uppercase ml-1 mb-1">Payment To</label>
-                                <select id="payment-to" class="w-full px-5 py-4 rounded-xl font-black">
-                                    <option value="">Choose Account</option>
+                            <div class="flex flex-col gap-1">
+                                <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Account Route</label>
+                                <select id="payment-to">
+                                    <option value="">Select Account</option>
                                     <option value="Tousif khan UPI">Tousif khan UPI</option>
                                     <option value="Waseem Akram UPI">Waseem Akram UPI</option>
                                     <option value="JABIR CASH">JABIR CASH</option>
@@ -308,18 +311,18 @@
                             </div>
                         </div>
 
-                        <h3 class="text-xl font-black text-white mb-4 text-center sm:text-left">Reserve Time Slots</h3>
-                        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 mb-10" id="slots-grid"></div>
+                        <h3 class="text-xl font-black text-white mb-4 text-left">Select Hourly Ranges</h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-10" id="slots-grid"></div>
 
-                        <div class="pt-8 border-t border-white/5 space-y-4">
-                            <h3 class="text-xl font-black text-white text-center sm:text-left">Adjustments</h3>
+                        <div class="pt-8 border-t border-white/5 space-y-4 text-left">
+                            <h3 class="text-xl font-black text-white">Price Tweak</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="relative">
                                     <span class="absolute left-5 top-1/2 -translate-y-1/2 font-black text-slate-500">₹</span>
-                                    <input type="number" id="pitch-rate-manual" value="1500" oninput="updateSaleSummary()" class="w-full pl-10 pr-5 py-4 rounded-xl font-black text-sky-400">
+                                    <input type="number" id="pitch-rate-manual" value="1500" oninput="updateSaleSummary()" class="pl-10 font-black text-sky-400">
                                 </div>
-                                <button onclick="toggleUpsell('Ball')" id="up-ball" class="w-full py-4 rounded-xl border-2 border-white/5 bg-[#334155] font-black text-slate-300 transition-all flex items-center justify-center gap-3">
-                                    <i class="fas fa-baseball-ball text-lg"></i> EQUIPMENT (+₹100)
+                                <button onclick="toggleUpsell('Ball')" id="up-ball" class="h-[52px] rounded-xl border-2 border-white/5 bg-[#334155] font-black text-slate-300 transition-all flex items-center justify-center gap-3">
+                                    <i class="fas fa-baseball-ball text-lg"></i> KIT (+₹100)
                                 </button>
                             </div>
                         </div>
@@ -327,19 +330,19 @@
                 </div>
 
                 <div class="lg:col-span-1">
-                    <div class="premium-card p-6 border-t-[8px] border-t-sky-500 shadow-2xl min-h-[400px]">
-                        <div class="flex-grow">
+                    <div class="premium-card p-6 border-t-[8px] border-t-sky-500 shadow-2xl flex flex-col justify-between h-full min-h-[400px]">
+                        <div>
                             <h3 class="text-xl font-black text-white mb-6 text-center md:text-left">Settlement Summary</h3>
                             <div id="txn-summary" class="space-y-3"></div>
                             <div id="final-total" class="mt-8 pt-8 border-t border-white/5 hidden text-center md:text-left">
-                                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Grand Total</span>
+                                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Total Settled</span>
                                 <div id="total-val" class="text-5xl font-black text-white tracking-tighter">₹0</div>
                                 <div id="savings-display" class="text-[10px] font-black text-emerald-400 uppercase mt-1"></div>
                             </div>
                         </div>
-                        <div class="mt-10 space-y-4">
+                        <div class="mt-10 space-y-4 text-center md:text-left">
                             <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Send WA Confirmation</span>
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">WhatsApp Receipt</span>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="send-wa-toggle" checked class="sr-only peer">
                                     <div class="w-10 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sky-500"></div>
@@ -353,15 +356,15 @@
         </section>
 
         <!-- Reports Section -->
-        <section id="reports-section" class="hidden max-w-7xl mx-auto space-y-8">
-            <div class="flex flex-col md:flex-row justify-between gap-6 text-center md:text-left items-center md:items-end">
-                <div>
-                    <h1 class="text-3xl font-black text-white tracking-tight">Financial Performance</h1>
-                    <p class="text-slate-400 text-[10px] uppercase font-bold tracking-widest">Multi-Period Advanced Audit</p>
+        <section id="reports-section" class="hidden max-w-7xl mx-auto space-y-8 text-center sm:text-left">
+            <div class="flex flex-col md:flex-row justify-between gap-6 items-center md:items-end">
+                <div class="w-full sm:w-auto">
+                    <h1 class="text-3xl font-black text-white tracking-tight">Audit Console</h1>
+                    <p class="text-slate-400 text-[10px] uppercase font-bold tracking-widest text-center sm:text-left">Comprehensive Settlement Tracking</p>
                 </div>
                 <div class="flex gap-2">
-                    <input type="date" id="report-date-picker" onchange="renderDailyReport(this.value)" class="px-5 py-3 rounded-xl outline-none font-bold text-sm bg-[#334155] border-white/5">
-                    <button onclick="shareReportWhatsApp()" class="px-6 py-3 bg-emerald-600 text-white rounded-xl font-black text-sm uppercase shadow-lg shadow-emerald-900/20">Executive Report</button>
+                    <input type="date" id="report-date-picker" onchange="renderDailyReport(this.value)" class="px-5 py-3 rounded-xl outline-none font-bold text-sm bg-[#334155] border-white/5 h-[48px]">
+                    <button onclick="shareReportWhatsApp()" class="px-6 py-3 bg-emerald-600 text-white rounded-xl font-black text-sm uppercase shadow-lg h-[48px]">Executive Report</button>
                 </div>
             </div>
 
@@ -369,45 +372,42 @@
             <div class="flex bg-white/5 p-1.5 rounded-2xl gap-2 overflow-x-auto no-scrollbar">
                 <button onclick="changeReportMode('daily')" id="tab-daily" class="flex-1 report-tab-active px-6 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all">Daily Cycle</button>
                 <button onclick="changeReportMode('weekly')" id="tab-weekly" class="flex-1 px-6 py-4 rounded-xl text-slate-400 font-black uppercase text-[10px] tracking-widest transition-all">Weekly Trend</button>
-                <button onclick="changeReportMode('monthly')" id="tab-monthly" class="flex-1 px-6 py-4 rounded-xl text-slate-400 font-black uppercase text-[10px] tracking-widest transition-all">Monthly Overview</button>
+                <button onclick="changeReportMode('monthly')" id="tab-monthly" class="flex-1 px-6 py-4 rounded-xl text-slate-400 font-black uppercase text-[10px] tracking-widest transition-all">Monthly View</button>
             </div>
 
-            <!-- Stats Grid -->
+            <!-- Enhanced Settlement Stats -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="premium-card p-6 text-center">
-                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Aggregated Sales</p>
+                <div class="premium-card p-6 flex flex-col items-center justify-center bg-sky-500/10 border-sky-500/20">
+                    <p class="text-[9px] font-black text-sky-400 uppercase tracking-widest mb-1">Total UPI</p>
+                    <p id="adv-upi-val" class="text-xl sm:text-2xl font-black text-white">₹0</p>
+                </div>
+                <div class="premium-card p-6 flex flex-col items-center justify-center bg-emerald-500/10 border-emerald-500/20">
+                    <p class="text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-1">Total CASH</p>
+                    <p id="adv-cash-val" class="text-xl sm:text-2xl font-black text-white">₹0</p>
+                </div>
+                <div class="premium-card p-6 flex flex-col items-center justify-center bg-white/5">
+                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Period Sales</p>
                     <p id="adv-sales-val" class="text-xl sm:text-2xl font-black text-white">₹0</p>
                 </div>
-                <div class="premium-card p-6 text-center">
-                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Average/Slot</p>
-                    <p id="adv-avg-val" class="text-xl sm:text-2xl font-black text-sky-400">₹0</p>
-                </div>
-                <div class="premium-card p-6 text-center">
-                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Bookings</p>
-                    <p id="adv-count-val" class="text-xl sm:text-2xl font-black text-emerald-400">0</p>
-                </div>
-                <div class="premium-card p-6 text-center">
-                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Net Cashflow</p>
-                    <p id="adv-profit-val" class="text-xl sm:text-2xl font-black text-white">₹0</p>
+                <div class="premium-card p-6 flex flex-col items-center justify-center bg-white/5">
+                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Bookings Count</p>
+                    <p id="adv-count-val" class="text-xl sm:text-2xl font-black text-white">0</p>
                 </div>
             </div>
 
-            <!-- Chart -->
-            <div class="premium-card p-6 md:p-10 min-h-[400px]">
-                <div class="h-full w-full">
-                    <canvas id="reportsChart"></canvas>
-                </div>
+            <div class="premium-card p-6 md:p-10 h-[400px]">
+                <canvas id="reportsChart"></canvas>
             </div>
 
-            <!-- Detailed Table -->
             <div class="premium-card overflow-x-auto no-scrollbar border-b-0 rounded-b-none">
-                <table class="w-full text-left min-w-[750px]">
+                <table class="w-full text-left min-w-[800px]">
                     <thead class="bg-white/5 text-[10px] font-black text-slate-500 uppercase tracking-widest">
                         <tr>
-                            <th class="px-8 py-6">Team/Player Identity</th>
-                            <th class="px-8 py-6 text-center">Account Route</th>
-                            <th class="px-8 py-6 text-right">Settled Amount</th>
-                            <th class="px-8 py-6 text-center">Actions</th>
+                            <th class="py-6 table-cell-left">Captain / Team Name</th>
+                            <th class="py-6 table-cell-center">Reserved Slots</th>
+                            <th class="py-6 table-cell-center">Route</th>
+                            <th class="py-6 table-cell-right">Amount</th>
+                            <th class="py-6 table-cell-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="report-table-body" class="divide-y divide-white/5"></tbody>
@@ -416,13 +416,13 @@
         </section>
 
         <!-- Expenses Section -->
-        <section id="expenses-section" class="hidden max-w-4xl mx-auto space-y-6">
+        <section id="expenses-section" class="hidden max-w-4xl mx-auto space-y-6 text-center sm:text-left">
             <h1 class="text-2xl font-black text-white text-center">Operational Expenses</h1>
-            <div class="premium-card p-6 md:p-10 border-t-4 border-t-rose-500">
+            <div class="premium-card p-6 md:p-10 border-t-4 border-t-rose-500 text-center sm:text-left">
                 <div class="flex flex-col md:flex-row gap-4">
-                    <input type="text" id="exp-desc" placeholder="Operational Cost Description" class="flex-grow px-5 py-4 rounded-xl font-bold">
-                    <input type="number" id="exp-amt" placeholder="Cost ₹" class="w-full md:w-40 px-5 py-4 rounded-xl font-black text-rose-400">
-                    <button onclick="addExpense()" class="px-10 py-4 bg-rose-500 text-white rounded-xl font-black uppercase tracking-tighter hover:bg-rose-600 transition-all">Log Expense</button>
+                    <input type="text" id="exp-desc" placeholder="Operational Cost Description" class="flex-grow px-5 h-[52px] rounded-xl font-bold">
+                    <input type="number" id="exp-amt" placeholder="Amount ₹" class="w-full md:w-40 px-5 h-[52px] rounded-xl font-black text-rose-400">
+                    <button onclick="addExpense()" class="px-10 h-[52px] bg-rose-500 text-white rounded-xl font-black uppercase tracking-tighter hover:bg-rose-600 transition-all">Sync Expense</button>
                 </div>
             </div>
             <div class="premium-card overflow-hidden">
@@ -433,84 +433,84 @@
         </section>
 
         <!-- Leads Section -->
-        <section id="leads-section" class="hidden max-w-5xl mx-auto space-y-8">
+        <section id="leads-section" class="hidden max-w-5xl mx-auto space-y-8 text-center sm:text-left">
             <div class="flex justify-between items-center px-4">
                 <h1 class="text-3xl font-black text-white tracking-tight">Lead Pipeline</h1>
-                <button onclick="openLeadModal()" class="px-6 py-3 bg-[#334155] border border-white/5 text-white rounded-xl font-black uppercase text-xs hover:bg-slate-700">Capture New</button>
+                <button onclick="openLeadModal()" class="px-6 py-3 bg-[#334155] border border-white/5 text-white rounded-xl font-black uppercase text-xs hover:bg-slate-700 transition-all">Capture New</button>
             </div>
             <div id="leads-container" class="grid grid-cols-1 md:grid-cols-2 gap-5 px-2"></div>
         </section>
 
         <!-- Settings Section -->
         <section id="settings-section" class="hidden max-w-4xl mx-auto space-y-6 text-center sm:text-left">
-            <h1 class="text-2xl font-black text-white text-center">System Configuration</h1>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div class="premium-card p-8">
-                    <h4 class="font-black mb-4 text-sky-400 uppercase tracking-widest text-xs">Standard Rates</h4>
+            <h1 class="text-2xl font-black text-white text-center">Cloud Settings</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-center sm:text-left">
+                <div class="premium-card p-8 text-left">
+                    <h4 class="font-black mb-4 text-sky-400 uppercase tracking-widest text-xs">Standard Tariffs</h4>
                     <div class="space-y-4">
-                        <div class="flex flex-col">
-                            <label class="text-[9px] font-black text-slate-500 uppercase ml-1 mb-1">Base Hourly Rate (₹)</label>
-                            <input type="number" id="config-base-rate" value="1500" class="w-full px-5 py-3 rounded-xl font-bold">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[9px] font-black text-slate-500 uppercase ml-1">Hourly Rate (₹)</label>
+                            <input type="number" id="config-base-rate" value="1500" class="px-5 h-[52px] rounded-xl font-bold">
                         </div>
-                        <div class="flex flex-col">
-                            <label class="text-[9px] font-black text-slate-500 uppercase ml-1 mb-1">Equipment Fee (₹)</label>
-                            <input type="number" id="config-ball-price" value="100" class="w-full px-5 py-3 rounded-xl font-bold">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[9px] font-black text-slate-500 uppercase ml-1">Standard Kit Fee (₹)</label>
+                            <input type="number" id="config-ball-price" value="100" class="px-5 h-[52px] rounded-xl font-bold">
                         </div>
                     </div>
                 </div>
-                <div class="premium-card p-8 text-center sm:text-left">
-                    <h4 class="font-black mb-4 text-sky-400 uppercase tracking-widest text-xs">Offer Logic</h4>
+                <div class="premium-card p-8 text-left">
+                    <h4 class="font-black mb-4 text-sky-400 uppercase tracking-widest text-xs">Discount Engine</h4>
                     <div class="space-y-4">
-                        <div class="flex flex-col">
-                            <label class="text-[9px] font-black text-slate-500 uppercase ml-1 mb-1">Early Bird (%)</label>
-                            <input type="number" id="config-eb-pct" value="20" class="w-full px-5 py-3 rounded-xl font-bold">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[9px] font-black text-slate-500 uppercase ml-1">Early Bird (%)</label>
+                            <input type="number" id="config-eb-pct" value="20" class="px-5 h-[52px] rounded-xl font-bold">
                         </div>
-                        <div class="flex flex-col">
-                            <label class="text-[9px] font-black text-slate-500 uppercase ml-1 mb-1">Bulk Booking Discount (%)</label>
-                            <input type="number" id="config-bulk-pct" value="10" class="w-full px-5 py-3 rounded-xl font-bold">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[9px] font-black text-slate-500 uppercase ml-1">Bulk Disc (%)</label>
+                            <input type="number" id="config-bulk-pct" value="10" class="px-5 h-[52px] rounded-xl font-bold">
                         </div>
                     </div>
                 </div>
             </div>
             <div class="text-center pt-8">
-                <button onclick="saveGlobalSettings()" class="px-16 py-4 bg-sky-600 text-white rounded-xl font-black uppercase text-sm shadow-2xl shadow-sky-900/40 transform active:scale-95">Sync Cloud Config</button>
+                <button onclick="saveGlobalSettings()" class="px-16 h-[52px] bg-sky-600 text-white rounded-xl font-black uppercase text-sm shadow-xl hover:bg-sky-500 transition-all transform active:scale-95">Update Cloud Config</button>
             </div>
         </section>
     </main>
 
-    <!-- Mobile Bottom Navigation -->
+    <!-- Mobile Navigation -->
     <nav class="md:hidden fixed bottom-5 left-5 right-5 h-20 glass-panel z-[100] rounded-[30px] shadow-2xl flex items-center justify-around px-4 border border-white/10">
         <button onclick="showSection('dashboard')" id="mob-dashboard" class="flex flex-col items-center gap-1 text-slate-500 transition-all">
             <i class="fas fa-grid-2 text-xl"></i>
-            <span class="text-[8px] font-black uppercase tracking-tighter">Home</span>
+            <span class="text-[8px] font-black uppercase tracking-tighter text-center">Home</span>
         </button>
         <button onclick="showSection('sales')" id="mob-sales" class="flex flex-col items-center gap-1 text-slate-500 transition-all">
             <i class="fas fa-plus-circle text-xl"></i>
-            <span class="text-[8px] font-black uppercase tracking-tighter">Book</span>
+            <span class="text-[8px] font-black uppercase tracking-tighter text-center">Book</span>
         </button>
         <div class="w-px h-10 bg-white/5"></div>
         <button onclick="showSection('reports')" id="mob-reports" class="flex flex-col items-center gap-1 text-slate-500 transition-all">
             <i class="fas fa-analytics text-xl"></i>
-            <span class="text-[8px] font-black uppercase tracking-tighter">Report</span>
+            <span class="text-[8px] font-black uppercase tracking-tighter text-center">Audit</span>
         </button>
         <button onclick="showSection('leads')" id="mob-leads" class="flex flex-col items-center gap-1 text-slate-500 transition-all">
-            <i class="fas fa-users-crown text-xl"></i>
-            <span class="text-[8px] font-black uppercase tracking-tighter">Leads</span>
+            <i class="fas fa-users-viewfinder text-xl"></i>
+            <span class="text-[8px] font-black uppercase tracking-tighter text-center">Leads</span>
         </button>
     </nav>
 
     <!-- Lead Modal -->
-    <div id="lead-modal" class="fixed inset-0 bg-slate-950/90 hidden items-center justify-center z-[200] p-6 backdrop-blur-md">
-        <div class="bg-[#1e293b] rounded-[32px] max-w-md w-full p-8 shadow-2xl border border-white/10">
-            <h2 class="text-2xl font-black text-white mb-6 text-center">Capture Inquiry</h2>
+    <div id="lead-modal" class="fixed inset-0 bg-slate-950/90 hidden items-center justify-center z-[200] p-6 backdrop-blur-sm text-center">
+        <div class="bg-[#1e293b] rounded-[32px] max-w-md w-full p-8 shadow-2xl border border-white/10 text-center">
+            <h2 class="text-2xl font-black text-white mb-6">Capture Inquiry</h2>
             <div class="space-y-4 mb-8">
-                <input type="text" id="lead-name" placeholder="Full Name" class="w-full px-5 py-4 rounded-xl outline-none font-bold">
-                <input type="tel" id="lead-phone" placeholder="Mobile" class="w-full px-5 py-4 rounded-xl outline-none font-bold">
-                <textarea id="lead-notes" placeholder="Any specific requirements?" class="w-full px-5 py-4 rounded-xl outline-none font-bold h-24"></textarea>
+                <input type="text" id="lead-name" placeholder="Full Name" class="w-full px-5 h-[52px] rounded-xl outline-none font-bold">
+                <input type="tel" id="lead-phone" placeholder="Mobile Number" class="w-full px-5 h-[52px] rounded-xl outline-none font-bold">
+                <textarea id="lead-notes" placeholder="Requirement notes..." class="w-full px-5 py-4 rounded-xl outline-none font-bold h-24"></textarea>
             </div>
-            <div class="flex gap-3">
-                <button onclick="closeLeadModal()" class="flex-1 py-4 text-slate-500 font-bold uppercase text-xs">Discard</button>
-                <button onclick="saveLead()" class="flex-2 px-10 py-4 bg-sky-600 text-white rounded-xl font-black uppercase text-xs">Save Lead</button>
+            <div class="flex gap-3 text-center">
+                <button onclick="closeLeadModal()" class="flex-1 py-4 text-slate-400 font-bold uppercase text-xs hover:bg-white/5 rounded-xl transition-colors">Discard</button>
+                <button onclick="saveLead()" class="flex-2 px-10 py-4 bg-sky-600 text-white rounded-xl font-black uppercase text-xs hover:bg-sky-500 transition-all">Save Lead</button>
             </div>
         </div>
     </div>
@@ -523,7 +523,7 @@
 
         // --- GLOBAL SETUP ---
         const OWNER_MOBILE = "9019467717";
-        const SLOTS = ["06:00 AM", "07:00 AM", "08:00 AM", "09:00 AM", "10:00 AM", "04:00 PM", "05:00 PM", "06:00 PM", "07:00 PM", "08:00 PM", "09:00 PM", "10:00 PM"];
+        const SLOTS = ["06-07 AM", "07-08 AM", "08-09 AM", "09-10 AM", "10-11 AM", "04-05 PM", "05-06 PM", "06-07 PM", "07-08 PM", "08-09 PM", "09-10 PM", "10-11 PM"];
         let transactions = [];
         let expenses = [];
         let leads = [];
@@ -534,6 +534,12 @@
         let editingTxnId = null;
         let reportMode = 'daily';
         let chartInstance = null;
+
+        function formatDateDisplay(dateStr) {
+            if (!dateStr) return '';
+            const [y, m, d] = dateStr.split('-');
+            return `${d}-${m}-${y.slice(-2)}`; 
+        }
 
         // --- UI UTILS ---
         window.hideLoader = () => {
@@ -557,7 +563,12 @@
             document.getElementById(`nav-${section}`)?.classList.add('active');
             document.getElementById(`mob-${section}`)?.classList.add('mob-nav-active');
             
-            if(section === 'sales') window.renderSlots();
+            if(section === 'sales') {
+                if(!editingTxnId) {
+                    document.getElementById('sale-date').value = new Date().toISOString().split('T')[0];
+                }
+                window.renderSlots();
+            }
             if(section === 'reports') window.renderDailyReport(document.getElementById('report-date-picker')?.value || new Date().toISOString().split('T')[0]);
             if(section === 'expenses') window.renderExpenses();
             
@@ -570,7 +581,7 @@
         };
 
         window.sendOfferMessage = (name, phone) => {
-            const msg = `*OXYGEN PRO: Elite Member Special!*%0A---------------------------%0AHi ${name}, we loved having you at Oxygen Powerplay Arena Lingrajpuram!%0A%0AWe have a special slot opening for you this week. Book now and enjoy an Elite Loyalty discount.%0A%0A_Reply to this message or call ${OWNER_MOBILE} to reserve your turf._%0A%0A*Breathe. Play. Win.*`;
+            const msg = `*OXYGEN PRO: Special Offer!*%0A---------------------------%0AHi ${name}, missed you at the arena!%0A%0ABook your next match today and get a special loyalty discount.%0A%0A_Reply to this message or call ${OWNER_MOBILE} to reserve._%0A%0A*Breathe. Play. Win.*`;
             window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
         };
 
@@ -610,24 +621,98 @@
 
         const setupListeners = () => {
             if (!db || !user) return;
+            
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'), (snap) => {
                 transactions = snap.docs.map(d => ({id: d.id, ...d.data()}));
                 window.updateStats();
                 if (!document.getElementById('reports-section').classList.contains('hidden')) window.renderDailyReport(document.getElementById('report-date-picker')?.value);
                 if (!document.getElementById('sales-section').classList.contains('hidden')) window.renderSlots();
             });
+
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), (snap) => {
                 expenses = snap.docs.map(d => ({id: d.id, ...d.data()}));
                 window.updateStats();
-                if (!document.getElementById('reports-section').classList.contains('hidden')) window.renderDailyReport(document.getElementById('report-date-picker')?.value);
             });
+
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), (snap) => {
                 leads = snap.docs.map(d => ({id: d.id, ...d.data()}));
                 window.renderLeads();
             });
         };
 
-        // --- CORE LOGIC ---
+        // --- CALC LOGIC ---
+        function runCalc() {
+            const rateVal = document.getElementById('pitch-rate-manual')?.value;
+            const rate = parseFloat(rateVal) || 0;
+            let disc = 0;
+            if (selectedSlots.length >= 3) disc += (selectedSlots.length * rate) * (config.bulkPct/100);
+            
+            const earlyRanges = ["06-07 AM", "07-08 AM", "08-09 AM", "09-10 AM"];
+            const mSlots = selectedSlots.filter(s => earlyRanges.includes(s));
+            if (mSlots.length > 0) disc += (mSlots.length * rate) * (config.earlyBirdPct/100);
+            
+            disc = Math.round(disc);
+            const upsell = activeUpsells.length * config.ballPrice;
+            const total = (selectedSlots.length * rate - disc) + upsell;
+            return { total, discount: disc, rate, upsell };
+        }
+
+        window.updateSaleSummary = () => {
+            const summary = document.getElementById('txn-summary');
+            if(!summary) return;
+            if (selectedSlots.length === 0) {
+                summary.innerHTML = `<div class="text-center py-10 text-slate-500 uppercase font-black text-[9px]">Select Time Slots for Quote</div>`;
+                document.getElementById('final-total')?.classList.add('hidden');
+                return;
+            }
+            document.getElementById('final-total')?.classList.remove('hidden');
+            const c = runCalc();
+            summary.innerHTML = `<div class="bg-white/5 p-4 rounded-xl space-y-2 text-[10px] font-bold text-slate-400 uppercase tracking-tighter text-center md:text-left">
+                <div class="flex justify-between"><span>Base Tariff (${selectedSlots.length}h)</span><span class="text-white">₹${selectedSlots.length*c.rate}</span></div>
+                ${c.discount > 0 ? `<div class="flex justify-between text-emerald-400 italic"><span>Smart Applied Discount</span><span>-₹${c.discount}</span></div>` : ''}
+                ${c.upsell > 0 ? `<div class="flex justify-between text-sky-400"><span>Equipment Charge</span><span>+₹${c.upsell}</span></div>` : ''}
+            </div>`;
+            document.getElementById('total-val').innerText = `₹${c.total}`;
+            document.getElementById('savings-display').innerText = c.discount > 0 ? `Elite Rewards Savings: ₹${c.discount}` : '';
+        };
+
+        window.saveTransaction = async () => {
+            if (!user) return;
+            const n = document.getElementById('cust-name')?.value;
+            const m = document.getElementById('cust-mobile')?.value;
+            const p = document.getElementById('payment-to')?.value;
+            const d = document.getElementById('sale-date')?.value;
+            if (!n || !m || selectedSlots.length === 0 || !p || !d) return alert("Fill all Match Details.");
+            
+            const c = runCalc();
+            const txnData = {
+                name: n, mobile: m, date: d, paidTo: p,
+                total: c.total,
+                savings: c.discount,
+                slots: [...selectedSlots],
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                createdAt: new Date().getTime(),
+                isEdited: !!editingTxnId
+            };
+            
+            try {
+                if (editingTxnId) {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'transactions', editingTxnId), txnData);
+                } else {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'), txnData);
+                }
+                
+                if (document.getElementById('send-wa-toggle')?.checked) {
+                    const msg = `*OXYGEN PRO BOOKING*%0A---------------------------%0A*Name:* ${n}%0A*Date:* ${formatDateDisplay(d)}%0A*Slots:* ${selectedSlots.join(', ')}%0A*Settled:* ₹${c.total}%0A---------------------------%0A_Oxygen Powerplay Arena Lingrajpuram_`;
+                    window.open(`https://wa.me/91${m}?text=${msg}`, '_blank');
+                }
+                
+                window.cancelEdit();
+                window.showSection('dashboard');
+            } catch (e) { alert("Data transmission failed."); }
+        };
+
+        // --- DATA HUB ---
         window.updateStats = () => {
             const today = new Date().toISOString().split('T')[0];
             const tTxns = transactions.filter(t => t.date === today);
@@ -635,47 +720,36 @@
             
             const rev = tTxns.reduce((acc, t) => acc + (Number(t.total) || 0), 0);
             const exp = tExps.reduce((acc, e) => acc + (Number(e.amt) || 0), 0);
-            const savings = tTxns.reduce((acc, t) => acc + (Number(t.savings) || 0), 0);
+            const totalSavings = transactions.reduce((acc, t) => acc + (Number(t.savings) || 0), 0);
+            
+            document.getElementById('stat-revenue').innerText = `₹${rev.toLocaleString()}`;
+            document.getElementById('stat-profit').innerText = `₹${(rev - exp).toLocaleString()}`;
+            document.getElementById('stat-savings').innerText = `₹${totalSavings.toLocaleString()}`;
 
-            if(document.getElementById('stat-revenue')) document.getElementById('stat-revenue').innerText = `₹${rev.toLocaleString()}`;
-            if(document.getElementById('stat-profit')) document.getElementById('stat-profit').innerText = `₹${(rev - exp).toLocaleString()}`;
-            if(document.getElementById('stat-savings')) document.getElementById('stat-savings').innerText = `₹${savings.toLocaleString()}`;
+            const sortedRecent = [...transactions].sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 5);
+            const container = document.getElementById('recent-sales');
+            if (container) {
+                container.innerHTML = sortedRecent.length === 0 ? `<div class="text-center py-6 opacity-30 text-xs font-bold uppercase">No Recent Activity</div>` : sortedRecent.map(t => `
+                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-sky-600 flex items-center justify-center font-black text-white text-sm shadow-lg">${(t.name || 'P')[0]}</div>
+                            <div class="text-left leading-tight">
+                                <p class="font-bold text-white text-sm mb-0.5">${t.name}</p>
+                                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest text-left">${formatDateDisplay(t.date)} • ${t.timestamp} ${t.isEdited ? '• (Edited)' : ''}</p>
+                            </div>
+                        </div>
+                        <p class="font-black text-white text-sm">₹${t.total}</p>
+                    </div>`).join('');
+            }
             
             const allSlots = transactions.flatMap(t => t.slots || []);
             if (allSlots.length > 0) {
                 const counts = allSlots.reduce((a, c) => { a[c] = (a[c] || 0) + 1; return a; }, {});
                 const hot = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
-                if(document.getElementById('stat-hot-slot')) document.getElementById('stat-hot-slot').innerText = hot;
+                document.getElementById('stat-hot-slot').innerText = hot;
             }
 
-            window.renderRecentSales(tTxns);
             window.renderFrequentCustomers();
-        };
-
-        window.renderRecentSales = (todayTxns) => {
-            const container = document.getElementById('recent-sales');
-            if(!container) return;
-            const sorted = todayTxns.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 4);
-            if (sorted.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 opacity-30 text-xs font-bold uppercase tracking-widest text-slate-500">No Transactions Recorded</div>`;
-                return;
-            }
-            container.innerHTML = sorted.map(t => `
-                <div class="flex items-center justify-between p-5 bg-white/5 rounded-2xl border border-white/5">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-lg bg-sky-600 flex items-center justify-center font-black text-white text-sm shadow-lg">
-                            ${(t.name || 'P')[0]}
-                        </div>
-                        <div>
-                            <p class="font-bold text-white text-sm leading-none mb-1">${t.name}</p>
-                            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">
-                                ${t.timestamp || ''} ${t.isEdited ? '• <span class="text-amber-500">Edited</span>' : ''}
-                            </p>
-                        </div>
-                    </div>
-                    <p class="font-black text-white text-sm">₹${t.total}</p>
-                </div>
-            `).join('');
         };
 
         window.renderFrequentCustomers = () => {
@@ -687,22 +761,12 @@
                 acc[t.mobile].count++;
                 return acc;
             }, {});
-            const top = Object.values(customers).sort((a, b) => b.count - a.count).slice(0, 4);
-            if (top.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 text-slate-600 text-xs font-bold">No frequent players found</div>`;
-                return;
-            }
-            container.innerHTML = top.map(c => {
-                const phone = Object.keys(customers).find(k => customers[k] === c);
-                return `
+            const top = Object.values(customers).sort((a, b) => b.count - a.count).slice(0, 5);
+            container.innerHTML = top.length === 0 ? `<div class="text-center py-6 text-slate-600 text-xs font-bold uppercase">No visits found</div>` : top.map(c => `
                 <div class="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
-                    <span class="text-xs font-bold text-slate-300">${c.name}</span>
-                    <div class="flex items-center gap-3">
-                        <button onclick="window.sendOfferMessage('${c.name}', '${phone}')" class="text-emerald-500 hover:text-emerald-400 p-1 transition-colors"><i class="fab fa-whatsapp"></i></button>
-                        <span class="px-3 py-1 bg-sky-600/20 text-sky-400 text-[8px] font-black rounded-lg uppercase shadow-lg shadow-sky-900/20">${c.count} Trips</span>
-                    </div>
-                </div>`;
-            }).join('');
+                    <span class="text-xs font-bold text-slate-300 text-left">${c.name}</span>
+                    <span class="px-3 py-1 bg-sky-600/20 text-sky-400 text-[8px] font-black rounded-lg uppercase shadow-lg">${c.count} Trips</span>
+                </div>`).join('');
         };
 
         window.renderSlots = () => {
@@ -712,14 +776,13 @@
             const occupiedSlots = transactions
                 .filter(t => t.date === currentDate && t.id !== editingTxnId)
                 .flatMap(t => t.slots || []);
-                
             grid.innerHTML = SLOTS.map(slot => {
                 const isOccupied = occupiedSlots.includes(slot);
                 const isSelected = selectedSlots.includes(slot);
-                const isOffer = ["06:00 AM", "07:00 AM", "08:00 AM", "09:00 AM"].includes(slot);
+                const isOffer = ["06-07 AM", "07-08 AM", "08-09 AM", "09-10 AM"].includes(slot);
                 let btnClass = isOccupied 
-                    ? "slot-card occupied p-3 rounded-xl border text-[8px] font-black"
-                    : `slot-card p-3 rounded-xl text-[9px] font-black transition ${isSelected ? 'selected' : ''}`;
+                    ? "slot-card occupied"
+                    : `slot-card ${isSelected ? 'selected' : ''}`;
                 const offerTag = (!isOccupied && isOffer) ? `<span class="block text-[6px] text-emerald-400 mt-0.5 uppercase tracking-tighter">20% Off</span>` : "";
                 return `<button ${isOccupied ? 'disabled' : ''} onclick="toggleSlot('${slot}')" class="${btnClass}">${slot}${offerTag}</button>`;
             }).join('');
@@ -735,219 +798,17 @@
 
         window.toggleUpsell = (item) => {
             const idx = activeUpsells.indexOf(item);
-            const btn = document.getElementById(`up-${item.toLowerCase()}`);
-            if (idx > -1) {
-                activeUpsells.splice(idx, 1);
-                btn?.classList.replace('bg-sky-600', 'bg-[#334155]');
-                btn?.classList.replace('text-white', 'text-slate-300');
-            } else {
-                activeUpsells.push(item);
-                btn?.classList.replace('bg-[#334155]', 'bg-sky-600');
-                btn?.classList.replace('text-slate-300', 'text-white');
-            }
+            if (idx > -1) activeUpsells.splice(idx, 1);
+            else activeUpsells.push(item);
             window.updateSaleSummary();
-        };
-
-        window.updateSaleSummary = () => {
-            const summary = document.getElementById('txn-summary');
-            if(!summary) return;
-            const rate = parseFloat(document.getElementById('pitch-rate-manual')?.value) || 0;
-            if (selectedSlots.length === 0) {
-                summary.innerHTML = `<div class="text-center py-10 text-slate-500 uppercase font-black text-[10px]">Awaiting Selections...</div>`;
-                document.getElementById('final-total')?.classList.add('hidden');
-                return;
-            }
-            document.getElementById('final-total')?.classList.remove('hidden');
-            let disc = 0;
-            if (selectedSlots.length >= 3) disc += (selectedSlots.length * rate) * (config.bulkPct/100);
-            const mSlots = selectedSlots.filter(s => ["06:00 AM", "07:00 AM", "08:00 AM", "09:00 AM"].includes(s));
-            if (mSlots.length > 0) disc += (mSlots.length * rate) * (config.earlyBirdPct/100);
-            disc = Math.round(disc);
-            const upsell = activeUpsells.length * config.ballPrice;
-            const total = (selectedSlots.length * rate - disc) + upsell;
-            summary.innerHTML = `<div class="bg-white/5 p-5 rounded-2xl border border-white/5 space-y-2 text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                <div class="flex justify-between"><span>Pitch Charge (${selectedSlots.length}h)</span><span class="text-white">₹${selectedSlots.length*rate}</span></div>
-                ${disc > 0 ? `<div class="flex justify-between text-emerald-400 italic"><span>Smart Applied Discount</span><span>-₹${disc}</span></div>` : ''}
-                ${upsell > 0 ? `<div class="flex justify-between text-sky-400"><span>Equipment/Extras</span><span>+₹${upsell}</span></div>` : ''}
-            </div>`;
-            document.getElementById('total-val').innerText = `₹${total}`;
-            document.getElementById('savings-display').innerText = disc > 0 ? `Elite Rewards Savings: ₹${disc}` : '';
-            window.lastCalc = { total, discount: disc };
-        };
-
-        window.saveTransaction = async () => {
-            if (!user) return;
-            const n = document.getElementById('cust-name')?.value;
-            const m = document.getElementById('cust-mobile')?.value;
-            const p = document.getElementById('payment-to')?.value;
-            const d = document.getElementById('sale-date')?.value;
-            if (!n || !m || selectedSlots.length === 0 || !p || !d) return alert("All fields are mandatory.");
-            
-            const txnData = {
-                name: n, mobile: m, date: d, paidTo: p,
-                total: window.lastCalc.total,
-                savings: window.lastCalc.discount,
-                slots: [...selectedSlots],
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                createdAt: new Date().getTime(),
-                isEdited: editingTxnId ? true : false
-            };
-            
-            try {
-                if (editingTxnId) {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'transactions', editingTxnId), txnData);
-                } else {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'), txnData);
-                }
-                
-                if (document.getElementById('send-wa-toggle')?.checked) {
-                    const msg = `*OXYGEN PRO BOOKING*%0A---------------------------%0A*Status:* ${editingTxnId ? 'CORRECTED' : 'CONFIRMED'}%0A*Player:* ${n}%0A*Date:* ${d}%0A*Slots:* ${selectedSlots.join(', ')}%0A*Settled:* ₹${window.lastCalc.total}%0A---------------------------%0A_Oxygen Powerplay Arena Lingrajpuram_`;
-                    window.open(`https://wa.me/91${m}?text=${msg}`, '_blank');
-                }
-                
-                window.cancelEdit();
-                window.showSection('dashboard');
-            } catch (e) { alert("Data Sync Failed"); }
-        };
-
-        // --- ADVANCED AUDIT LOGIC ---
-        window.changeReportMode = (mode) => {
-            reportMode = mode;
-            ['daily', 'weekly', 'monthly'].forEach(m => {
-                const el = document.getElementById(`tab-${m}`);
-                if (el) el.className = (m === mode) 
-                    ? "flex-1 report-tab-active px-6 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all"
-                    : "flex-1 px-6 py-4 rounded-xl text-slate-400 font-black uppercase text-[10px] tracking-widest transition-all";
-            });
-            window.renderDailyReport(document.getElementById('report-date-picker')?.value);
-        };
-
-        window.renderDailyReport = (selectedDate) => {
-            const dateObj = selectedDate ? new Date(selectedDate) : new Date();
-            const dateStr = dateObj.toISOString().split('T')[0];
-            
-            let filteredTxns = [];
-            let filteredExps = [];
-            let labels = [];
-            let dataset = [];
-
-            if (reportMode === 'daily') {
-                filteredTxns = transactions.filter(t => t.date === dateStr);
-                filteredExps = expenses.filter(e => e.date === dateStr);
-                labels = SLOTS;
-                dataset = SLOTS.map(s => filteredTxns.filter(t => t.slots?.includes(s)).reduce((a,c) => a + Number(c.total), 0));
-            } else if (reportMode === 'weekly') {
-                const start = new Date(dateObj);
-                start.setDate(start.getDate() - 7);
-                filteredTxns = transactions.filter(t => new Date(t.date) >= start && new Date(t.date) <= dateObj);
-                filteredExps = expenses.filter(e => new Date(e.date) >= start && new Date(e.date) <= dateObj);
-                
-                for(let i=0; i<7; i++) {
-                    const d = new Date(start); d.setDate(d.getDate() + i);
-                    const dStr = d.toISOString().split('T')[0];
-                    labels.push(dStr.slice(5));
-                    dataset.push(filteredTxns.filter(t => t.date === dStr).reduce((a,c) => a+Number(c.total), 0));
-                }
-            } else if (reportMode === 'monthly') {
-                const month = dateObj.getMonth();
-                const year = dateObj.getFullYear();
-                filteredTxns = transactions.filter(t => {
-                    const d = new Date(t.date);
-                    return d.getMonth() === month && d.getFullYear() === year;
-                });
-                filteredExps = expenses.filter(e => {
-                    const d = new Date(e.date);
-                    return d.getMonth() === month && d.getFullYear() === year;
-                });
-                
-                labels = ["Week 1", "Week 2", "Week 3", "Week 4"];
-                for(let i=0; i<4; i++) {
-                    dataset.push(filteredTxns.filter((t, idx) => Math.floor(new Date(t.date).getDate()/7) === i).reduce((a,c) => a+Number(c.total), 0));
-                }
-            }
-
-            const rev = filteredTxns.reduce((acc, t) => acc + (Number(t.total) || 0), 0);
-            const exp = filteredExps.reduce((acc, e) => acc + (Number(e.amt) || 0), 0);
-            const count = filteredTxns.length;
-            const avg = count > 0 ? (rev / count).toFixed(0) : 0;
-
-            if(document.getElementById('adv-sales-val')) document.getElementById('adv-sales-val').innerText = `₹${rev.toLocaleString()}`;
-            if(document.getElementById('adv-avg-val')) document.getElementById('adv-avg-val').innerText = `₹${Number(avg).toLocaleString()}`;
-            if(document.getElementById('adv-count-val')) document.getElementById('adv-count-val').innerText = count;
-            if(document.getElementById('adv-profit-val')) document.getElementById('adv-profit-val').innerText = `₹${(rev - exp).toLocaleString()}`;
-
-            const tableBody = document.getElementById('report-table-body');
-            if(tableBody) tableBody.innerHTML = filteredTxns.map(t => `
-                <tr class="text-center sm:text-left">
-                    <td class="px-8 py-5 text-sm">
-                        <div class="flex items-center justify-center sm:justify-start gap-2 font-bold text-white">
-                            ${t.name} ${t.isEdited ? '<span class="edited-badge">Edited</span>' : ''}
-                        </div>
-                        <div class="text-[9px] text-slate-500">${t.date} • ${t.timestamp}</div>
-                    </td>
-                    <td class="px-8 py-5 text-[10px] font-black uppercase text-slate-400 text-center">${t.paidTo || 'N/A'}</td>
-                    <td class="px-8 py-5 text-right font-black text-white">₹${t.total}</td>
-                    <td class="px-8 py-5 text-center">
-                        <div class="flex items-center justify-center gap-4">
-                            <button onclick="window.editBooking('${t.id}')" class="text-sky-400 hover:text-sky-300 transition-colors"><i class="fas fa-edit"></i></button>
-                            <button onclick="window.voidTransaction('${t.id}')" class="text-rose-500/50 hover:text-rose-500 transition-colors"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                    </td>
-                </tr>`).join('');
-
-            updateChart(labels, dataset);
-        };
-
-        function updateChart(labels, data) {
-            const ctx = document.getElementById('reportsChart').getContext('2d');
-            if(chartInstance) chartInstance.destroy();
-            
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Revenue Trend',
-                        data: data,
-                        borderColor: '#0ea5e9',
-                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
-                        borderWidth: 4,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#0ea5e9',
-                        pointBorderWidth: 2,
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
-                        x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        window.shareReportWhatsApp = () => {
-            const date = document.getElementById('report-date-picker')?.value || new Date().toISOString().split('T')[0];
-            const rev = document.getElementById('adv-sales-val').innerText;
-            const prof = document.getElementById('adv-profit-val').innerText;
-            const count = document.getElementById('adv-count-val').innerText;
-            
-            const msg = `*OXYGEN POWERPLAY ARENA: ADV AUDIT*%0A---------------------------%0A*Mode:* ${reportMode.toUpperCase()}%0A*Reference:* ${date}%0A---------------------------%0A*Total Revenue:* ${rev}%0A*Total Matches:* ${count}%0A*Profit Margin:* ${prof}%0A---------------------------%0A_Generated via Pro Dashboard_`;
-            window.open(`https://wa.me/91${OWNER_MOBILE}?text=${msg}`, '_blank');
         };
 
         window.editBooking = (id) => {
             const txn = transactions.find(t => t.id === id);
             if (!txn) return;
             editingTxnId = id;
-            document.getElementById('booking-title').innerText = "Correct Booking Entry";
-            document.getElementById('submit-booking-btn').innerText = "Save Correction";
+            document.getElementById('booking-title').innerText = "Correct Matching Entry";
+            document.getElementById('submit-booking-btn').innerText = "Apply Changes";
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
             document.getElementById('cust-name').value = txn.name || '';
             document.getElementById('cust-mobile').value = txn.mobile || '';
@@ -966,53 +827,172 @@
             document.getElementById('cust-mobile').value = '';
             document.getElementById('payment-to').value = '';
             selectedSlots = [];
+            activeUpsells = [];
             window.renderSlots();
         };
 
-        window.voidTransaction = async (id) => { if (confirm("Delete this transaction entry permanently?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'transactions', id)); };
-        
+        // --- AUDIT SYSTEM ---
+        window.changeReportMode = (mode) => {
+            reportMode = mode;
+            ['daily', 'weekly', 'monthly'].forEach(m => {
+                const el = document.getElementById(`tab-${m}`);
+                if (el) el.className = (m === mode) 
+                    ? "flex-1 report-tab-active px-6 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all"
+                    : "flex-1 px-6 py-4 rounded-xl text-slate-400 font-black uppercase text-[10px] tracking-widest transition-all";
+            });
+            window.renderDailyReport(document.getElementById('report-date-picker')?.value);
+        };
+
+        window.renderDailyReport = (selectedDate) => {
+            const dateObj = selectedDate ? new Date(selectedDate) : new Date();
+            const dateStr = dateObj.toISOString().split('T')[0];
+            let filteredTxns = []; let filteredExps = []; let labels = []; let dataset = [];
+
+            if (reportMode === 'daily') {
+                filteredTxns = transactions.filter(t => t.date === dateStr);
+                filteredExps = expenses.filter(e => e.date === dateStr);
+                labels = SLOTS;
+                dataset = SLOTS.map(s => filteredTxns.filter(t => t.slots?.includes(s)).reduce((a,c) => a + Number(c.total), 0));
+            } else if (reportMode === 'weekly') {
+                const start = new Date(dateObj); start.setDate(start.getDate() - 7);
+                filteredTxns = transactions.filter(t => new Date(t.date) >= start && new Date(t.date) <= dateObj);
+                filteredExps = expenses.filter(e => new Date(e.date) >= start && new Date(e.date) <= dateObj);
+                for(let i=0; i<7; i++) {
+                    const d = new Date(start); d.setDate(d.getDate() + i);
+                    const dStr = d.toISOString().split('T')[0]; labels.push(formatDateDisplay(dStr));
+                    dataset.push(filteredTxns.filter(t => t.date === dStr).reduce((a,c) => a+Number(c.total), 0));
+                }
+            } else if (reportMode === 'monthly') {
+                const month = dateObj.getMonth(); const year = dateObj.getFullYear();
+                filteredTxns = transactions.filter(t => { const d = new Date(t.date); return d.getMonth() === month && d.getFullYear() === year; });
+                filteredExps = expenses.filter(e => { const d = new Date(e.date); return d.getMonth() === month && d.getFullYear() === year; });
+                labels = ["Week 1", "Week 2", "Week 3", "Week 4"];
+                for(let i=0; i<4; i++) {
+                    dataset.push(filteredTxns.filter((t, idx) => Math.floor(new Date(t.date).getDate()/7) === i).reduce((a,c) => a+Number(c.total), 0));
+                }
+            }
+
+            const rev = filteredTxns.reduce((acc, t) => acc + (Number(t.total) || 0), 0);
+            const exp = filteredExps.reduce((acc, e) => acc + (Number(e.amt) || 0), 0);
+            const upiTotal = filteredTxns.filter(t => t.paidTo && t.paidTo.includes('UPI')).reduce((a,c) => a + Number(c.total), 0);
+            const cashTotal = filteredTxns.filter(t => t.paidTo && t.paidTo.includes('CASH')).reduce((a,c) => a + Number(c.total), 0);
+
+            if(document.getElementById('adv-sales-val')) document.getElementById('adv-sales-val').innerText = `₹${rev.toLocaleString()}`;
+            if(document.getElementById('adv-upi-val')) document.getElementById('adv-upi-val').innerText = `₹${upiTotal.toLocaleString()}`;
+            if(document.getElementById('adv-cash-val')) document.getElementById('adv-cash-val').innerText = `₹${cashTotal.toLocaleString()}`;
+            if(document.getElementById('adv-count-val')) document.getElementById('adv-count-val').innerText = filteredTxns.length;
+            if(document.getElementById('adv-profit-val')) document.getElementById('adv-profit-val').innerText = `₹${(rev - exp).toLocaleString()}`;
+            
+            const count = filteredTxns.length;
+            const avg = count > 0 ? (rev / count).toFixed(0) : 0;
+            if(document.getElementById('adv-avg-val')) document.getElementById('adv-avg-val').innerText = `₹${Number(avg).toLocaleString()}`;
+
+            const tableBody = document.getElementById('report-table-body');
+            if(tableBody) tableBody.innerHTML = filteredTxns.map(t => `
+                <tr class="text-center sm:text-left">
+                    <td class="px-8 py-5 text-sm table-cell-left">
+                        <div class="flex items-center justify-center sm:justify-start gap-2 font-bold text-white">
+                            ${t.name} ${t.isEdited ? '<span class="edited-badge">Edited</span>' : ''}
+                        </div>
+                        <div class="text-[9px] text-slate-500 uppercase font-black">${formatDateDisplay(t.date)} • ${t.timestamp}</div>
+                    </td>
+                    <td class="px-8 py-5 text-[10px] font-bold text-sky-400 table-cell-center">
+                        <div class="flex flex-col gap-1">
+                            ${(t.slots || []).map(s => `<span>${s}</span>`).join('')}
+                        </div>
+                    </td>
+                    <td class="px-8 py-5 text-[10px] font-black uppercase text-slate-400 table-cell-center">${t.paidTo || 'N/A'}</td>
+                    <td class="px-8 py-5 text-right font-black text-white table-cell-right">₹${t.total}</td>
+                    <td class="px-8 py-5 table-cell-center">
+                        <div class="flex items-center justify-center gap-4">
+                            <button onclick="window.editBooking('${t.id}')" class="text-sky-400 hover:text-sky-300"><i class="fas fa-edit"></i></button>
+                            <button onclick="window.voidTransaction('${t.id}')" class="text-rose-500/50 hover:text-rose-500"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </td>
+                </tr>`).join('');
+
+            updateChart(labels, dataset);
+        };
+
+        function updateChart(labels, data) {
+            const ctx = document.getElementById('reportsChart').getContext('2d');
+            if(chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Performance Trend', data: data,
+                        borderColor: '#0ea5e9', backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        borderWidth: 4, fill: true, tension: 0.4, pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        window.shareReportWhatsApp = () => {
+            const dateInput = document.getElementById('report-date-picker')?.value || new Date().toISOString().split('T')[0];
+            const dateFormatted = formatDateDisplay(dateInput);
+            
+            const filteredTxns = transactions.filter(t => t.date === dateInput);
+            const totalRev = filteredTxns.reduce((acc, t) => acc + (Number(t.total) || 0), 0);
+            const upiTotal = filteredTxns.filter(t => t.paidTo && t.paidTo.includes('UPI')).reduce((a,c) => a + Number(c.total), 0);
+            const cashTotal = filteredTxns.filter(t => t.paidTo && t.paidTo.includes('CASH')).reduce((a,c) => a + Number(c.total), 0);
+            
+            let matchDetails = "";
+            filteredTxns.forEach(t => {
+                matchDetails += `• ${t.name} (${(t.slots || []).join(', ')}) - ₹${t.total} [${t.paidTo}]%0A`;
+            });
+
+            const msg = `*OXYGEN PRO: AUDIT REPORT - ${dateFormatted}*%0A---------------------------%0A*Match Details:*%0A${matchDetails || 'No Matches Recorded'}%0A---------------------------%0A*Aggregated Sales:* ₹${totalRev.toLocaleString()}%0A*UPI Total:* ₹${upiTotal.toLocaleString()}%0A*CASH Total:* ₹${cashTotal.toLocaleString()}%0A---------------------------%0A_Sync via Oxygen Pro Cloud_`;
+            window.open(`https://wa.me/91${OWNER_MOBILE}?text=${msg}`, '_blank');
+        };
+
+        window.voidTransaction = async (id) => { if (confirm("Erase entry permanently?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'transactions', id)); };
         window.addExpense = async () => {
             const d = document.getElementById('exp-desc')?.value; const a = parseFloat(document.getElementById('exp-amt')?.value);
             if (d && a && db) {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), { desc: d, amt: a, date: new Date().toISOString().split('T')[0], createdAt: new Date().getTime() });
                 document.getElementById('exp-desc').value = ''; document.getElementById('exp-amt').value = '';
+                window.renderExpenses();
             }
         };
-
         window.renderExpenses = () => {
             const b = document.getElementById('expense-table-body'); if(!b) return;
             const today = new Date().toISOString().split('T')[0];
             const tExps = expenses.filter(e => e.date === today).sort((a,b) => b.createdAt - a.createdAt);
-            b.innerHTML = tExps.length === 0 ? `<tr><td class="px-8 py-10 text-center text-slate-600 font-bold uppercase text-[10px]">No Logs Recorded Today</td></tr>` : tExps.map(e => `
+            b.innerHTML = tExps.length === 0 ? `<tr><td class="px-8 py-10 text-center text-slate-600 font-bold uppercase text-[10px]">No Operating Logs Recorded</td></tr>` : tExps.map(e => `
                 <tr class="text-xs">
                     <td class="px-8 py-5 font-bold text-white text-center sm:text-left">${e.desc}</td>
-                    <td class="px-8 py-5 text-right font-black text-rose-400">
-                        ₹${e.amt} 
-                        <button onclick="window.deleteExpense('${e.id}')" class="ml-4 text-slate-700 hover:text-rose-500 transition-colors"><i class="fas fa-times-circle"></i></button>
-                    </td>
+                    <td class="px-8 py-5 text-right font-black text-rose-400">₹${e.amt} <button onclick="window.deleteExpense('${e.id}')" class="ml-4 text-slate-700 hover:text-rose-500 transition-colors"><i class="fas fa-times-circle"></i></button></td>
                 </tr>`).join('');
         };
-
-        window.deleteExpense = async (id) => { if(confirm("Erase this expense record?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'expenses', id)); };
-
+        window.deleteExpense = async (id) => { if(confirm("Erase?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'expenses', id)); };
         window.renderLeads = () => {
             const c = document.getElementById('leads-container'); if(!c) return;
-            c.innerHTML = leads.length === 0 ? `<div class="col-span-2 text-center py-10 text-slate-700 font-black uppercase text-[10px]">Empty Lead Pipeline</div>` : leads.map(l => `
+            c.innerHTML = leads.length === 0 ? `<div class="col-span-2 text-center py-10 text-slate-700 font-black uppercase text-[10px]">Pipeline Empty</div>` : leads.map(l => `
                 <div class="premium-card p-5 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
                     <div class="flex flex-col sm:flex-row items-center gap-4">
                         <div class="w-10 h-10 bg-white/5 text-sky-400 rounded-xl flex items-center justify-center font-black text-xs shadow-inner">${(l.name || '?')[0]}</div>
                         <div class="flex flex-col">
-                            <h4 class="font-bold text-white text-sm leading-tight">${l.name}</h4>
-                            <p class="text-[10px] text-slate-500 font-medium">${l.phone}</p>
+                            <h4 class="font-bold text-white text-sm leading-tight text-left">${l.name}</h4>
+                            <p class="text-[10px] text-slate-500 font-medium text-left">${l.phone}</p>
                         </div>
                     </div>
                     <div class="flex items-center justify-center gap-3">
-                        <button onclick="window.sendOfferMessage('${l.name}', '${l.phone}')" class="w-9 h-9 bg-emerald-500/10 text-emerald-500 rounded-xl flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all"><i class="fab fa-whatsapp"></i></button>
-                        <button onclick="window.convertLead('${l.name}', '${l.phone}')" class="px-5 py-2.5 bg-sky-600/10 text-sky-400 rounded-xl text-[9px] font-black uppercase border border-sky-400/20 hover:bg-sky-600 hover:text-white transition-all">Convert</button>
+                        <button onclick="window.sendOfferMessage('${l.name}', '${l.phone}')" class="w-9 h-9 bg-emerald-500/10 text-emerald-500 rounded-xl flex items-center justify-center transition hover:bg-emerald-500 hover:text-white"><i class="fab fa-whatsapp"></i></button>
+                        <button onclick="window.convertLead('${l.name}', '${l.phone}')" class="px-5 py-2.5 bg-sky-600/10 text-sky-400 rounded-xl text-[9px] font-black uppercase border border-sky-400/20 transition hover:bg-sky-600 hover:text-white">Convert</button>
                     </div>
                 </div>`).join('');
         };
-
         window.saveLead = async () => {
             const n = document.getElementById('lead-name')?.value;
             const p = document.getElementById('lead-phone')?.value;
@@ -1022,15 +1002,8 @@
                 window.closeLeadModal();
             }
         };
-
-        window.convertLead = (n, p) => { 
-            window.showSection('sales'); 
-            document.getElementById('cust-name').value = n; 
-            document.getElementById('cust-mobile').value = p; 
-            window.checkLoyalty(p); 
-        };
-
-        window.saveGlobalSettings = () => { config.baseRate = parseFloat(document.getElementById('config-base-rate').value); config.ballPrice = parseFloat(document.getElementById('config-ball-price').value); alert("Cloud Sync Successful."); window.showSection('dashboard'); };
+        window.convertLead = (n, p) => { window.showSection('sales'); document.getElementById('cust-name').value = n; document.getElementById('cust-mobile').value = p; window.checkLoyalty(p); };
+        window.saveGlobalSettings = () => { config.baseRate = parseFloat(document.getElementById('config-base-rate').value); config.ballPrice = parseFloat(document.getElementById('config-ball-price').value); alert("Cloud Sync Optimised."); window.showSection('dashboard'); };
         window.checkLoyalty = (m) => { if(transactions.some(t => t.mobile === m)) document.getElementById('loyalty-alert')?.classList.remove('hidden'); else document.getElementById('loyalty-alert')?.classList.add('hidden'); };
         window.openLeadModal = () => document.getElementById('lead-modal')?.classList.remove('hidden');
         window.closeLeadModal = () => document.getElementById('lead-modal')?.classList.add('hidden');
