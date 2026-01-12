@@ -370,6 +370,9 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // ==========================================
+        // FIREBASE CONFIGURATION
+        // ==========================================
         const myFirebaseConfig = {
             apiKey: "AIzaSyCgNHaZXx3J_HrxPeDbIJKaz1h6LVYEPjo",
             authDomain: "oxygen-pro-74335.firebaseapp.com",
@@ -378,6 +381,7 @@
             messagingSenderId: "832418100752",
             appId: "1:832418100752:web:6491b9a6c406b8eec17c95"
         };
+        // ==========================================
 
         const SLOTS_DATA = [
             { id: "06-07 AM", type: 'value', basePrice: 1000, tag: "Early Bird", start: 6 },
@@ -399,7 +403,6 @@
         let db, auth, user, appId;
         let isCloud = false;
 
-        // Core Countdown & Live Integration Logic
         const runCountdownEngine = () => {
             const now = new Date();
             const hour = now.getHours();
@@ -493,8 +496,8 @@
 
         window.applyPromo = () => {
             const code = document.getElementById('promo-code').value.toUpperCase();
-            if(code === 'O2PRO') { appliedPromo = code; alert("PRO-Code Applied!"); calculatePrice(); }
-            else { alert("Unknown Code."); }
+            if(code === 'O2PRO') { appliedPromo = code; alert("Intelligence Sequence Validated: PRO-Code Applied!"); calculatePrice(); }
+            else { alert("Unknown Sequence."); }
         };
 
         const updateUI = () => {
@@ -556,7 +559,7 @@
 
         window.shareReceipt = (mobile, name, date, slots, total, account) => {
             const cleanMobile = mobile.replace(/\D/g, '');
-            if(!cleanMobile) return alert("Valid Mobile Required");
+            if(!cleanMobile) return alert("System Error: Valid Mobile Required");
             const accInfo = account ? `%0A💳 *Account:* ${account}` : '';
             const message = `*Oxygen Pro Elite Cricket Confirmation*%0A%0AHi *${name}*, field is reserved!%0A📅 *Date:* ${date}%0A🕒 *Slots:* ${slots}%0A💰 *Net:* ₹${total}${accInfo}%0A%0A_Sync complete via Oxygen Pro Engine_`;
             window.open(`https://wa.me/91${cleanMobile}?text=${message}`, '_blank');
@@ -564,7 +567,7 @@
 
         window.shareDailySummary = () => {
             const date = document.getElementById('report-filter-date').value;
-            if(!date) return alert("Date Selection Required");
+            if(!date) return alert("System Error: Date Selection Required");
             const dayTxns = transactions.filter(t => t.date === date);
             if(dayTxns.length === 0) return alert("No Transactional Data Found");
             const totalRev = dayTxns.reduce((a,c) => a + c.total, 0);
@@ -579,8 +582,8 @@
             const date = document.getElementById('sale-date').value;
             const account = document.getElementById('payment-account').value;
             const finalPrice = parseInt(document.getElementById('final-total-input').value);
-            if(!name || !date || selectedSlots.length === 0) return alert("Fill critical booking fields.");
-            if(isNaN(finalPrice)) return alert("Amount invalid.");
+            if(!name || !date || selectedSlots.length === 0) return alert("Logic Error: Fill critical booking fields.");
+            if(isNaN(finalPrice)) return alert("Data Error: Amount invalid.");
             const txn = { name, mobile, date, account, slots: [...selectedSlots], total: finalPrice, timestamp: new Date().getTime() };
             if(isCloud && user) {
                 try {
