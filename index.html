@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oxygen Pro | Elite Cricket Management</title>
+    <title>Oxygen Pro | Elite Cricket Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
@@ -29,7 +29,7 @@
             -webkit-tap-highlight-color: transparent;
             overflow-x: hidden;
             line-height: 1.6;
-            text-align: center; /* Global center alignment */
+            text-align: center; 
         }
 
         #loading-screen {
@@ -51,6 +51,8 @@
             border: 1px solid var(--oxy-border);
             border-radius: 32px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .sidebar-item { 
@@ -68,10 +70,10 @@
             border: 1px solid var(--oxy-border);
             color: #94a3b8;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            height: 95px;
-            border-radius: 22px;
+            height: 85px; 
+            border-radius: 20px;
             cursor: pointer;
-            padding: 12px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -102,18 +104,11 @@
             border-color: transparent;
         }
 
-        .value-tag {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 8px;
-            font-weight: 900;
-            padding: 3px 10px;
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+        .cat-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-bottom: 6px;
         }
 
         input, select {
@@ -159,6 +154,33 @@
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        .loyalty-badge {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+            font-weight: 900;
+            font-size: 9px;
+            padding: 2px 8px;
+            border-radius: 99px;
+            text-transform: uppercase;
+        }
+
+        /* Tiny mini-slots for manual selection */
+        .mini-slot {
+            padding: 6px;
+            font-size: 9px;
+            font-weight: 900;
+            border: 1px solid var(--oxy-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(255,255,255,0.02);
+        }
+        .mini-slot.active {
+            background: var(--oxy-success);
+            color: white;
+            border-color: transparent;
+        }
     </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen">
@@ -186,7 +208,7 @@
                 <i class="fas fa-plus-circle w-5"></i> NEW BOOKING
             </button>
             <button onclick="showSection('reports')" id="side-reports" class="sidebar-item w-full p-5 rounded-[24px] flex items-center gap-4 font-bold text-sm text-slate-400 hover:bg-white/5">
-                <i class="fas fa-chart-bar w-5"></i> AUDIT LOGS
+                <i class="fas fa-receipt w-5"></i> AUDIT LOGS
             </button>
         </nav>
         <div class="p-8">
@@ -207,7 +229,7 @@
         <section id="dashboard-section" class="max-w-6xl mx-auto space-y-12">
             <div class="space-y-4 text-center">
                 <h2 class="text-4xl font-black tracking-tight">System Overview</h2>
-                <p class="text-slate-500 font-semibold uppercase text-xs tracking-[0.3em]">Real-time Intelligence & Performance Metrics</p>
+                <p class="text-slate-500 font-semibold uppercase text-xs tracking-[0.3em]">Real-time Intelligence & Member Insights</p>
             </div>
             
             <!-- Live Match / Countdown Card -->
@@ -240,44 +262,64 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="glass-card p-10">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Loyalty Analytics -->
+                <div class="glass-card p-8 lg:col-span-2">
+                    <h4 class="font-black text-sm uppercase mb-8 text-slate-400 tracking-[0.3em]">Frequent Member Intelligence</h4>
+                    <div id="frequent-members-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="mt-8 pt-8 border-t border-white/5 flex justify-around items-center">
+                        <div>
+                            <p class="text-[10px] font-black uppercase text-slate-500">Most Booked Slot</p>
+                            <p id="pop-slot" class="text-lg font-black text-emerald-400">---</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-black uppercase text-slate-500">Loyalty Leader</p>
+                            <p id="pop-member" class="text-lg font-black text-sky-400">---</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Progress Tracking -->
+                <div class="glass-card p-8">
                     <h4 class="font-black text-sm uppercase mb-8 text-slate-400 tracking-[0.3em]">Goal Tracking</h4>
-                    <div class="space-y-10">
+                    <div class="space-y-8">
                         <div class="space-y-4">
                             <div class="flex justify-between text-xs font-black uppercase">
-                                <span>Monthly Progress</span>
+                                <span>Progress</span>
                                 <span id="target-percent" class="text-sky-400">0%</span>
                             </div>
-                            <div class="h-5 w-full bg-white/5 rounded-full p-1 border border-white/5">
-                                <div id="target-bar" class="h-full bg-gradient-to-r from-sky-600 to-sky-400 rounded-full transition-all duration-1000 shadow-[0_0_20px_rgba(14,165,233,0.4)]" style="width: 0%"></div>
+                            <div class="h-4 w-full bg-white/5 rounded-full p-0.5">
+                                <div id="target-bar" class="h-full bg-sky-500 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(14,165,233,0.4)]" style="width: 0%"></div>
                             </div>
                         </div>
-                        <div class="bg-sky-500/5 p-6 rounded-[24px] border border-sky-500/10">
-                            <p class="text-xs text-slate-400 leading-relaxed font-bold italic">
-                                "The engine detects high demand for Midnight Slots. Maintaining ₹1200 pricing for 11PM is optimal for conversion."
+                        <div class="bg-emerald-500/5 p-4 rounded-2xl border border-emerald-500/10">
+                            <p class="text-[10px] text-slate-400 leading-relaxed font-bold italic text-center">
+                                "Manual blast logic activated. Select vacant slots in the Repository tab to send tailored offers."
                             </p>
                         </div>
                     </div>
                 </div>
-                <div class="glass-card p-10">
-                    <h4 class="font-black text-sm uppercase mb-8 text-slate-400 tracking-[0.3em]">Activity Stream</h4>
-                    <div id="recent-list" class="space-y-5"></div>
-                </div>
             </div>
+
+            <div class="glass-card p-10">
+                <h4 class="font-black text-sm uppercase mb-8 text-slate-400 tracking-[0.3em]">Recent Activity Stream</h4>
+                <div id="recent-list" class="space-y-5 max-w-4xl mx-auto"></div>
+            </div>
+
             <button onclick="clearLocalStorage()" class="text-[10px] text-slate-600 uppercase font-black hover:text-red-400 transition tracking-widest">Wipe System Memory</button>
         </section>
 
         <!-- Booking Section -->
         <section id="sales-section" class="hidden max-w-5xl mx-auto space-y-10">
-            <div class="glass-card p-10 md:p-16 space-y-16">
+            <div class="glass-card p-10 md:p-16 space-y-16 text-center">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                     <div class="space-y-2">
                         <label class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Captain Name</label>
                         <input type="text" id="cust-name" placeholder="Full Name">
                     </div>
                     <div class="space-y-2">
-                        <label class="text-[11px] font-black uppercase text-slate-500 tracking-wider">WhatsApp Link</label>
+                        <label class="text-[11px] font-black uppercase text-slate-500 tracking-wider">WhatsApp Number</label>
                         <input type="tel" id="cust-mobile" placeholder="+91">
                     </div>
                     <div class="space-y-2">
@@ -292,16 +334,17 @@
 
                 <div class="max-w-4xl mx-auto">
                     <div class="flex flex-col items-center mb-10 space-y-3">
-                        <h4 class="text-lg font-black uppercase tracking-widest">Reserve Your Slots</h4>
-                        <div class="flex gap-6 text-[10px] font-black uppercase text-slate-500">
+                        <h4 class="text-lg font-black uppercase tracking-widest text-center">Reserve Your Slots</h4>
+                        <div class="flex justify-center gap-6 text-[10px] font-black uppercase text-slate-500">
                             <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/20"></span> Value</span>
+                            <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-slate-500 shadow-lg shadow-slate-500/20"></span> Standard</span>
                             <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-500 shadow-lg shadow-amber-500/20"></span> Peak</span>
                         </div>
                     </div>
                     <div id="slots-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
                 </div>
 
-                <div class="bg-sky-500/5 p-10 rounded-[40px] border border-sky-500/10 max-w-3xl mx-auto">
+                <div class="bg-sky-500/5 p-10 rounded-[40px] border border-sky-500/10 max-w-3xl mx-auto text-center">
                     <div id="offer-breakdown" class="hidden text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/10 p-4 rounded-2xl mb-10 border border-emerald-500/20">
                         <i class="fas fa-bolt mr-2"></i> Bulk Booking Incentive Applied
                     </div>
@@ -322,16 +365,31 @@
 
         <!-- Audit Section -->
         <section id="reports-section" class="hidden max-w-6xl mx-auto space-y-10">
-            <div class="glass-card bg-gradient-to-b from-sky-900/10 to-transparent p-12 text-center space-y-8">
+            <div class="glass-card bg-gradient-to-b from-sky-900/10 to-transparent p-12 text-center space-y-10">
                 <div class="space-y-2">
-                    <h3 class="text-2xl font-black uppercase tracking-[0.2em]">Audit Repository</h3>
-                    <p class="text-xs text-slate-500 font-bold uppercase tracking-widest">Consolidated Transactional Analytics</p>
+                    <h3 class="text-2xl font-black uppercase tracking-[0.2em]">Transactional Repository</h3>
+                    <p class="text-xs text-slate-500 font-bold uppercase tracking-widest text-center">Consolidated Performance Metrics</p>
                 </div>
-                <div class="flex flex-col md:flex-row items-center justify-center gap-6">
-                    <input type="date" id="report-filter-date" class="!w-52 !py-4 !text-xs font-black uppercase tracking-widest">
-                    <button onclick="shareDailySummary()" class="w-full md:w-auto bg-emerald-600 hover:bg-emerald-500 px-10 py-4 rounded-[20px] text-xs font-black uppercase tracking-widest flex items-center justify-center gap-4 transition shadow-2xl">
-                        <i class="fab fa-whatsapp text-2xl"></i> Share Summary
-                    </button>
+                
+                <div class="flex flex-col items-center gap-8">
+                    <input type="date" id="report-filter-date" onchange="refreshVacancyGrid()" class="!w-52 !py-4 !text-xs font-black uppercase tracking-widest">
+                    
+                    <!-- Manual Slot Picker for Vacancy -->
+                    <div class="w-full max-w-2xl space-y-4">
+                        <h4 class="text-[10px] font-black uppercase text-emerald-400 tracking-widest">Pick Vacant Slots for Blast Offer</h4>
+                        <div id="vacancy-manual-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                            <!-- Populated by JS based on date -->
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-center gap-6">
+                        <button onclick="shareDailySummary()" class="w-full md:w-auto bg-sky-600 hover:bg-sky-500 px-10 py-4 rounded-[20px] text-xs font-black uppercase tracking-widest flex items-center justify-center gap-4 transition shadow-2xl">
+                            <i class="fas fa-file-invoice-dollar text-xl"></i> Daily Audit
+                        </button>
+                        <button onclick="shareEmptySlotOffer()" class="w-full md:w-auto bg-emerald-600 hover:bg-emerald-500 px-10 py-4 rounded-[20px] text-xs font-black uppercase tracking-widest flex items-center justify-center gap-4 transition shadow-2xl">
+                            <i class="fab fa-whatsapp text-2xl"></i> Blast Selected Vacancies
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -340,11 +398,11 @@
                     <table class="w-full text-center min-w-[1000px]">
                         <thead class="bg-white/5 text-[11px] font-black uppercase text-slate-500 border-b border-white/5">
                             <tr>
-                                <th class="p-8">Captain Profile</th>
-                                <th class="p-8">Slot Breakdown</th>
-                                <th class="p-8">Settlement A/C</th>
-                                <th class="p-8">Net Bill</th>
-                                <th class="p-8">Interaction</th>
+                                <th class="p-8 text-center">Captain Profile</th>
+                                <th class="p-8 text-center">Slot Breakdown</th>
+                                <th class="p-8 text-center">Settlement A/C</th>
+                                <th class="p-8 text-center">Net Bill</th>
+                                <th class="p-8 text-center">Interaction</th>
                             </tr>
                         </thead>
                         <tbody id="report-body"></tbody>
@@ -368,7 +426,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // ==========================================
         // FIREBASE CONFIGURATION
@@ -385,21 +443,28 @@
 
         const SLOTS_DATA = [
             { id: "06-07 AM", type: 'value', basePrice: 1000, tag: "Early Bird", start: 6 },
-            { id: "07-08 AM", type: 'value', basePrice: 1000, tag: "Value Deal", start: 7 },
-            { id: "08-09 AM", type: 'std', basePrice: 1400, start: 8 },
-            { id: "04-05 PM", type: 'std', basePrice: 1400, start: 16 },
+            { id: "07-08 AM", type: 'value', basePrice: 1000, tag: "Early Bird", start: 7 },
+            { id: "08-09 AM", type: 'value', basePrice: 1200, tag: "Value Deal", start: 8 },
+            { id: "09-10 AM", type: 'std', basePrice: 1400, tag: "Standard", start: 9 },
+            { id: "10-11 AM", type: 'std', basePrice: 1400, tag: "Standard", start: 10 },
+            { id: "11-12 PM", type: 'std', basePrice: 1400, tag: "Standard", start: 11 },
+            { id: "12-01 PM", type: 'std', basePrice: 1400, tag: "Standard", start: 12 },
+            { id: "01-02 PM", type: 'std', basePrice: 1400, tag: "Standard", start: 13 },
+            { id: "02-03 PM", type: 'std', basePrice: 1400, tag: "Standard", start: 14 },
+            { id: "03-04 PM", type: 'std', basePrice: 1400, tag: "Standard", start: 15 },
+            { id: "04-05 PM", type: 'std', basePrice: 1400, tag: "Standard", start: 16 },
             { id: "05-06 PM", type: 'peak', basePrice: 1800, tag: "Peak", start: 17 },
             { id: "06-07 PM", type: 'peak', basePrice: 1800, tag: "Peak", start: 18 },
             { id: "07-08 PM", type: 'peak', basePrice: 1800, tag: "Peak", start: 19 },
             { id: "08-09 PM", type: 'peak', basePrice: 1800, tag: "Peak", start: 20 },
-            { id: "09-10 PM", type: 'std', basePrice: 1400, tag: "Standard", start: 21 },
-            { id: "10-11 PM", type: 'std', basePrice: 1400, tag: "Late Night", start: 22 },
+            { id: "09-10 PM", type: 'late', basePrice: 1500, tag: "Late Night", start: 21 },
+            { id: "10-11 PM", type: 'late', basePrice: 1500, tag: "Late Night", start: 22 },
             { id: "11-12 AM", type: 'value', basePrice: 1200, tag: "Midnight", start: 23 }
         ];
 
         let transactions = JSON.parse(localStorage.getItem('oxy_local_txns') || "[]");
         let selectedSlots = [];
-        let appliedPromo = null;
+        let manualBlastSlots = [];
         let db, auth, user, appId;
         let isCloud = false;
 
@@ -448,6 +513,7 @@
             const mobileBtn = document.getElementById('nav-' + s);
             if(mobileBtn) mobileBtn.classList.replace('text-slate-400', 'text-sky-500');
             if(s === 'sales') window.renderSlots();
+            if(s === 'reports') window.refreshVacancyGrid();
             updateUI();
         };
 
@@ -458,15 +524,36 @@
             grid.innerHTML = SLOTS_DATA.map(s => {
                 const isOcc = occupied.includes(s.id);
                 const isSel = selectedSlots.includes(s.id);
-                const accent = s.type === 'value' ? 'border-emerald-500/30' : (s.type === 'peak' ? 'border-amber-500/30' : 'border-white/5');
+                const accentColor = s.type === 'value' ? 'bg-emerald-500' : (s.type === 'peak' ? 'bg-amber-500' : 'bg-slate-500');
+                const accentBorder = s.type === 'value' ? 'border-emerald-500/30' : (s.type === 'peak' ? 'border-amber-500/30' : 'border-white/5');
                 return `
-                    <div onclick="toggleSlot('${s.id}')" class="slot-card ${isOcc ? 'occupied' : (isSel ? 'selected' : '')} ${accent}">
-                        ${s.tag && !isOcc ? `<span class="value-tag ${s.type === 'peak' ? 'bg-amber-600' : 'bg-emerald-600'}">${s.tag}</span>` : ''}
-                        <span class="text-[12px] font-black">${s.id}</span>
-                        <span class="text-[10px] mt-2 opacity-50 font-bold italic tracking-tight">₹${s.basePrice}</span>
+                    <div onclick="toggleSlot('${s.id}')" class="slot-card ${isOcc ? 'occupied' : (isSel ? 'selected' : '')} ${accentBorder}">
+                        ${!isOcc ? `<div class="cat-dot ${accentColor}"></div>` : ''}
+                        <span class="text-[12px] font-black text-center">${s.id}</span>
+                        <span class="text-[10px] mt-1 opacity-50 font-bold italic tracking-tight text-center">₹${s.basePrice}</span>
                     </div>`;
             }).join('');
             calculatePrice();
+        };
+
+        window.refreshVacancyGrid = () => {
+            const date = document.getElementById('report-filter-date').value;
+            const occupied = transactions.filter(t => t.date === date).flatMap(t => t.slots);
+            const vacantGrid = document.getElementById('vacancy-manual-grid');
+            const emptySlots = SLOTS_DATA.filter(s => !occupied.includes(s.id));
+            
+            vacantGrid.innerHTML = emptySlots.map(s => `
+                <div onclick="toggleManualBlastSlot('${s.id}')" id="mb-${s.id}" class="mini-slot ${manualBlastSlots.includes(s.id) ? 'active' : ''}">
+                    ${s.id}
+                </div>
+            `).join('') || '<p class="col-span-full opacity-20 text-[9px] font-black">FULL OCCUPANCY DETECTED</p>';
+        };
+
+        window.toggleManualBlastSlot = (id) => {
+            const idx = manualBlastSlots.indexOf(id);
+            if(idx > -1) manualBlastSlots.splice(idx, 1);
+            else manualBlastSlots.push(id);
+            window.refreshVacancyGrid();
         };
 
         window.toggleSlot = (s) => {
@@ -480,7 +567,10 @@
         };
 
         const calculatePrice = () => {
-            let subtotal = selectedSlots.reduce((acc, id) => acc + SLOTS_DATA.find(s => s.id === id).basePrice, 0);
+            let subtotal = selectedSlots.reduce((acc, id) => {
+                const slot = SLOTS_DATA.find(s => s.id === id);
+                return acc + (slot ? slot.basePrice : 0);
+            }, 0);
             let discount = 0;
             if(selectedSlots.length >= 3) {
                 discount = subtotal * 0.10;
@@ -488,16 +578,9 @@
             } else {
                 document.getElementById('offer-breakdown').classList.add('hidden');
             }
-            if(appliedPromo === 'O2PRO') discount += (subtotal * 0.10); 
             const finalTotal = Math.floor(subtotal - discount);
             document.getElementById('final-total-input').value = finalTotal;
             return finalTotal;
-        };
-
-        window.applyPromo = () => {
-            const code = document.getElementById('promo-code').value.toUpperCase();
-            if(code === 'O2PRO') { appliedPromo = code; alert("Intelligence Sequence Validated: PRO-Code Applied!"); calculatePrice(); }
-            else { alert("Unknown Sequence."); }
         };
 
         const updateUI = () => {
@@ -518,15 +601,44 @@
             document.getElementById('target-percent').innerText = `${Math.round(progress)}%`;
             document.getElementById('target-bar').style.width = `${progress}%`;
 
+            // Member Loyalty
+            const memberCounts = transactions.reduce((acc, t) => {
+                const key = t.name + ' (' + (t.mobile || 'No Contact') + ')';
+                acc[key] = (acc[key] || 0) + 1;
+                return acc;
+            }, {});
+            const sortedMembers = Object.entries(memberCounts).sort((a,b) => b[1] - a[1]);
+            const frequentList = document.getElementById('frequent-members-list');
+            frequentList.innerHTML = sortedMembers.slice(0, 4).map(([name, count]) => `
+                <div class="bg-white/5 p-4 rounded-2xl flex justify-between items-center border border-white/5 mx-auto w-full">
+                    <div class="text-left">
+                        <p class="font-black text-white text-xs">${name}</p>
+                        <span class="loyalty-badge mt-1 inline-block">LOYAL CAPTAIN</span>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-lg font-black text-white">${count}</p>
+                        <p class="text-[8px] opacity-40 uppercase font-black">Games</p>
+                    </div>
+                </div>
+            `).join('') || '<p class="col-span-2 py-4 opacity-30 text-xs italic font-black uppercase text-center">No Activity Recorded</p>';
+
+            const slotPopularity = transactions.flatMap(t => t.slots).reduce((acc, s) => {
+                acc[s] = (acc[s] || 0) + 1;
+                return acc;
+            }, {});
+            const sortedSlots = Object.entries(slotPopularity).sort((a,b) => b[1] - a[1]);
+            document.getElementById('pop-slot').innerText = sortedSlots[0]?.[0] || "---";
+            document.getElementById('pop-member').innerText = sortedMembers[0]?.[0].split('(')[0] || "---";
+
             const list = document.getElementById('recent-list');
-            const recent = [...transactions].sort((a,b) => b.timestamp - a.timestamp).slice(0, 4);
-            list.innerHTML = recent.map(t => `<div class="flex justify-between items-center bg-white/5 p-5 rounded-[22px] border-l-2 border-sky-500">
-                <div><p class="font-black text-sm text-white">${t.name}</p><p class="text-[10px] opacity-40 uppercase font-black tracking-widest mt-1">${t.date}</p></div>
+            const recent = [...transactions].sort((a,b) => b.timestamp - a.timestamp).slice(0, 5);
+            list.innerHTML = recent.map(t => `<div class="flex justify-between items-center bg-white/5 p-5 rounded-[22px] border-l-2 border-sky-500 max-w-2xl mx-auto w-full mb-3">
+                <div class="text-left"><p class="font-black text-sm text-white">${t.name}</p><p class="text-[10px] opacity-40 uppercase font-black tracking-widest mt-1">${t.date} · ${t.slots.length} Slots</p></div>
                 <div class="text-right">
                     <span class="font-black text-sky-400">₹${t.total}</span>
-                    <p class="text-[9px] opacity-30 font-bold uppercase">${t.account ? t.account.substring(0,12) : 'DIRECT'}</p>
+                    <p class="text-[9px] opacity-30 font-bold uppercase text-right">${t.account ? t.account.substring(0,10) : 'DIRECT'}</p>
                 </div>
-            </div>`).join('') || '<div class="p-10 text-center opacity-20 uppercase tracking-[0.5em] font-black text-xs italic">Awaiting Telemetry</div>';
+            </div>`).join('') || '<div class="p-10 opacity-20 uppercase tracking-[0.5em] font-black text-xs italic text-center">Awaiting Telemetry</div>';
 
             const report = document.getElementById('report-body');
             if(transactions.length === 0) {
@@ -535,22 +647,22 @@
             } else {
                 document.getElementById('no-reports').classList.add('hidden');
                 report.innerHTML = [...transactions].sort((a,b) => b.timestamp - a.timestamp).map(t => `<tr class="border-b border-white/5 text-sm hover:bg-white/5 transition">
-                    <td class="p-8">
-                        <p class="font-black text-white">${t.name}</p>
-                        <p class="text-[11px] opacity-50 font-black tracking-widest">${t.mobile || '---'}</p>
+                    <td class="p-8 text-center">
+                        <p class="font-black text-white text-center">${t.name}</p>
+                        <p class="text-[11px] opacity-50 font-black tracking-widest text-center">${t.mobile || '---'}</p>
                     </td>
-                    <td class="p-8">
-                        <p class="text-[11px] font-black uppercase text-sky-400 mb-2">${t.slots.join(', ')}</p>
-                        <p class="text-[10px] opacity-40 font-black uppercase">${t.date}</p>
+                    <td class="p-8 text-center">
+                        <p class="text-[11px] font-black uppercase text-sky-400 mb-2 text-center">${t.slots.join(', ')}</p>
+                        <p class="text-[10px] opacity-40 font-black uppercase text-center">${t.date}</p>
                     </td>
-                    <td class="p-8">
-                        <span class="bg-white/5 px-4 py-2 rounded-2xl text-[10px] font-black text-slate-400 border border-white/5 uppercase tracking-tighter">${t.account || 'DIRECT'}</span>
+                    <td class="p-8 text-center">
+                        <span class="bg-white/5 px-4 py-2 rounded-2xl text-[10px] font-black text-slate-400 border border-white/5 uppercase inline-block">${t.account || 'DIRECT'}</span>
                     </td>
-                    <td class="p-8 font-black text-xl text-white">₹${t.total.toLocaleString()}</td>
-                    <td class="p-8 text-right">
+                    <td class="p-8 font-black text-xl text-white text-center">₹${t.total.toLocaleString()}</td>
+                    <td class="p-8 text-center">
                         <button onclick="shareReceipt('${t.mobile}', '${t.name}', '${t.date}', '${t.slots.join(', ')}', ${t.total}, '${t.account}')" 
-                                class="bg-sky-500/10 text-sky-400 hover:bg-sky-500 hover:text-white px-6 py-4 rounded-[22px] transition-all text-[11px] font-black uppercase shadow-2xl">
-                            <i class="fab fa-whatsapp text-lg mr-2"></i> RECEIPT
+                                class="bg-sky-500/10 text-sky-400 hover:bg-sky-500 hover:text-white px-6 py-4 rounded-[22px] transition-all text-[11px] font-black uppercase shadow-2xl mx-auto flex items-center gap-2">
+                            <i class="fab fa-whatsapp text-lg"></i> RECEIPT
                         </button>
                     </td>
                 </tr>`).join('');
@@ -561,7 +673,7 @@
             const cleanMobile = mobile.replace(/\D/g, '');
             if(!cleanMobile) return alert("System Error: Valid Mobile Required");
             const accInfo = account ? `%0A💳 *Account:* ${account}` : '';
-            const message = `*Oxygen Pro Elite Cricket Confirmation*%0A%0AHi *${name}*, field is reserved!%0A📅 *Date:* ${date}%0A🕒 *Slots:* ${slots}%0A💰 *Net:* ₹${total}${accInfo}%0A%0A_Sync complete via Oxygen Pro Engine_`;
+            const message = `*Oxygen Pro Elite Cricket Confirmation*%0A%0AHi *${name}*, field is reserved!%0A📅 *Date:* ${date}%0A🕒 *Slots:* ${slots}%0A💰 *Net Bill:* ₹${total}${accInfo}%0A%0A_Sync complete via O2 Pro Engine_`;
             window.open(`https://wa.me/91${cleanMobile}?text=${message}`, '_blank');
         };
 
@@ -572,7 +684,17 @@
             if(dayTxns.length === 0) return alert("No Transactional Data Found");
             const totalRev = dayTxns.reduce((a,c) => a + c.total, 0);
             const summary = dayTxns.map(t => `- ${t.name} (₹${t.total})`).join('%0A');
-            const message = `*Oxygen Pro Daily Performance Summary*%0A📅 *Date:* ${date}%0A💰 *Total Revenue:* ₹${totalRev}%0A🏟️ *Field Activity:* ${dayTxns.length} Bookings%0A%0A*Breakdown:*%0A${summary}`;
+            const message = `*Oxygen Pro Daily Audit Report*%0A📅 *Date:* ${date}%0A💰 *Total Revenue:* ₹${totalRev}%0A🏟️ *Field Activity:* ${dayTxns.length} Bookings%0A%0A*Breakdown:*%0A${summary}`;
+            window.open(`https://wa.me/?text=${message}`, '_blank');
+        };
+
+        window.shareEmptySlotOffer = () => {
+            const date = document.getElementById('report-filter-date').value;
+            if(!date) return alert("Select Date first");
+            if(manualBlastSlots.length === 0) return alert("Select at least one vacant slot from the grid below to blast.");
+            
+            const slotList = manualBlastSlots.map(s => `🕒 *${s}*`).join('%0A');
+            const message = `*Oxygen Pro FLASH SALE!* 🏏%0A%0AAvailable slots for *${date}*:%0A%0A${slotList}%0A%0A🔥 *LOYALTY OFFER:* Book any of these manually selected slots now and get a *FLAT DISCOUNT!*%0A%0A📞 *Contact now to lock your game!*`;
             window.open(`https://wa.me/?text=${message}`, '_blank');
         };
 
@@ -582,18 +704,16 @@
             const date = document.getElementById('sale-date').value;
             const account = document.getElementById('payment-account').value;
             const finalPrice = parseInt(document.getElementById('final-total-input').value);
-            if(!name || !date || selectedSlots.length === 0) return alert("Logic Error: Fill critical booking fields.");
-            if(isNaN(finalPrice)) return alert("Data Error: Amount invalid.");
+            if(!name || !date || selectedSlots.length === 0) return alert("Fill critical booking fields.");
             const txn = { name, mobile, date, account, slots: [...selectedSlots], total: finalPrice, timestamp: new Date().getTime() };
             if(isCloud && user) {
                 try {
-                    const appIdLocal = typeof __app_id !== 'undefined' ? __app_id : "oxygen-pro-74335";
-                    await addDoc(collection(db, `artifacts/${appIdLocal}/public/data/bookings`), txn);
-                } catch(e) { console.error("Cloud Write Error:", e); }
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'bookings'), txn);
+                } catch(e) { console.error("Cloud Error:", e); }
             }
             transactions.push(txn);
             localStorage.setItem('oxy_local_txns', JSON.stringify(transactions));
-            alert(`CONFIRMED: Data logged for ${name}.`);
+            alert(`CONFIRMED: Booking logged for ${name}.`);
             selectedSlots = [];
             document.getElementById('cust-name').value = "";
             document.getElementById('cust-mobile').value = "";
@@ -601,14 +721,13 @@
             showSection('dashboard');
         };
 
-        window.clearLocalStorage = () => { if(confirm("Permanently wipe local transactional memory?")) { localStorage.removeItem('oxy_local_txns'); transactions = []; updateUI(); } };
+        window.clearLocalStorage = () => { if(confirm("Permanently wipe local memory?")) { localStorage.removeItem('oxy_local_txns'); transactions = []; updateUI(); } };
 
         const init = async () => {
             setInterval(runCountdownEngine, 1000); 
             const cloudTimer = setTimeout(() => { if(!isCloud) { document.getElementById('mode-indicator').classList.remove('hidden'); document.getElementById('loading-screen').style.display = 'none'; updateUI(); } }, 4000);
             try {
-                const appIdLocal = typeof __app_id !== 'undefined' ? __app_id : "oxygen-pro-74335";
-                appId = appIdLocal;
+                appId = typeof __app_id !== 'undefined' ? __app_id : "oxygen-pro-74335";
                 const config = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : myFirebaseConfig;
                 const app = initializeApp(config);
                 auth = getAuth(app); db = getFirestore(app);
@@ -625,17 +744,17 @@
                 onAuthStateChanged(auth, (u) => {
                     user = u; if(u) {
                         isCloud = true; clearTimeout(cloudTimer); document.getElementById('loading-screen').style.display = 'none';
-                        onSnapshot(collection(db, `artifacts/${appIdLocal}/public/data/bookings`), (snap) => {
+                        const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'bookings');
+                        onSnapshot(colRef, (snap) => {
                             if (!user) return;
                             transactions = snap.docs.map(d => ({...d.data(), id: d.id}));
                             localStorage.setItem('oxy_local_txns', JSON.stringify(transactions));
                             updateUI();
-                        }, (err) => { 
-                            console.error("Firestore Permission Denied. Check Rules."); 
-                        });
+                            window.refreshVacancyGrid();
+                        }, (err) => { console.error("Access Error. check Rules."); });
                     }
                 });
-            } catch(e) { console.error("Initialization Error:", e); }
+            } catch(e) { console.error("Init Error:", e); }
         };
 
         document.getElementById('sale-date').value = new Date().toISOString().split('T')[0];
