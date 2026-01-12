@@ -15,20 +15,21 @@
             --oxy-secondary: #38bdf8;
             --oxy-accent: #0f172a;
             --oxy-success: #10b981;
-            --oxy-bg: #0f172a; 
-            --oxy-surface: #1e293b; 
-            --oxy-text-main: #f1f5f9;
-            --oxy-text-muted: #94a3b8;
-            --oxy-border: rgba(255, 255, 255, 0.1);
+            --oxy-bg: #020617; 
+            --oxy-surface: rgba(15, 23, 42, 0.7); 
+            --oxy-border: rgba(255, 255, 255, 0.08);
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--oxy-bg);
-            color: var(--oxy-text-main);
+            background-image: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.1) 0%, transparent 50%),
+                              radial-gradient(circle at 50% 100%, rgba(14, 165, 233, 0.05) 0%, transparent 50%);
+            color: #f8fafc;
             -webkit-tap-highlight-color: transparent;
             overflow-x: hidden;
             line-height: 1.6;
+            text-align: center; /* Global center alignment */
         }
 
         #loading-screen {
@@ -43,69 +44,121 @@
             transition: opacity 0.5s ease;
         }
 
-        .premium-card {
+        .glass-card {
             background: var(--oxy-surface);
-            border-radius: 24px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--oxy-border);
+            border-radius: 32px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
         }
 
-        .sidebar-item { transition: all 0.2s ease; }
+        .sidebar-item { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            justify-content: center; 
+        }
         .sidebar-item.active {
             background: var(--oxy-primary);
             color: white;
-            box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3);
+            box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.4);
         }
 
         .slot-card {
-            background: #334155;
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--oxy-border);
-            color: var(--oxy-text-main);
-            transition: all 0.2s ease;
-            height: 60px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
+            color: #94a3b8;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 95px;
+            border-radius: 22px;
+            cursor: pointer;
+            padding: 12px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slot-card:hover:not(.occupied) {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-3px);
+            border-color: rgba(14, 165, 233, 0.4);
         }
 
         .slot-card.selected {
             background: var(--oxy-primary);
             border-color: transparent;
-            box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
+            color: white;
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px -4px rgba(14, 165, 233, 0.6);
         }
 
         .slot-card.occupied {
-            background: #1e293b;
-            color: #475569;
+            background: rgba(15, 23, 42, 0.5);
+            color: #334155;
             cursor: not-allowed;
-            opacity: 0.5;
+            opacity: 0.6;
+            border-color: transparent;
+        }
+
+        .value-tag {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8px;
+            font-weight: 900;
+            padding: 3px 10px;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
 
         input, select {
-            background: #334155;
+            background: rgba(15, 23, 42, 0.9);
             border: 1px solid var(--oxy-border);
             color: white;
-            border-radius: 12px;
-            padding: 12px;
+            border-radius: 18px;
+            padding: 16px;
             width: 100%;
             outline: none;
+            text-align: center; 
+            transition: all 0.2s;
+        }
+
+        input:focus { 
+            border-color: var(--oxy-primary);
+            box-shadow: 0 0 15px rgba(14, 165, 233, 0.1);
+        }
+
+        .manual-amt-input {
+            background: transparent;
+            border: none;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--oxy-primary);
+            width: 100%;
+            padding: 0;
+            text-align: center;
+        }
+        
+        .pulse-icon {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .countdown-display {
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.05em;
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        
-        .mode-badge {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 20px;
-            z-index: 200;
-        }
     </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen">
@@ -114,259 +167,477 @@
 
     <!-- Loading Screen -->
     <div id="loading-screen">
-        <div class="animate-bounce mb-4">
-            <i class="fas fa-baseball-ball text-sky-500 text-5xl"></i>
+        <div class="pulse-icon mb-6">
+            <i class="fas fa-baseball-ball text-sky-500 text-7xl"></i>
         </div>
-        <p class="text-xs font-black tracking-[0.3em] uppercase text-sky-400">Oxygen Pro</p>
+        <p class="text-xs font-black tracking-[0.5em] uppercase text-sky-400">Oxygen Pro Intelligence</p>
     </div>
 
     <!-- Sidebar -->
-    <aside class="hidden md:flex flex-col w-64 bg-[#1e293b] border-r border-white/5 sticky top-0 h-screen z-50">
-        <div class="p-6">
-            <h1 class="text-xl font-black italic">O2 <span class="text-sky-500">PRO</span></h1>
+    <aside class="hidden md:flex flex-col w-80 bg-[#01040f] border-r border-white/5 sticky top-0 h-screen z-50">
+        <div class="p-10 text-center">
+            <h1 class="text-3xl font-black italic tracking-tighter">OXYGEN <span class="text-sky-500">PRO</span></h1>
         </div>
-        <nav class="flex-grow px-4 space-y-2">
-            <button onclick="showSection('dashboard')" class="sidebar-item active w-full p-4 rounded-xl flex items-center gap-3 font-bold text-sm">
-                <i class="fas fa-chart-pie w-5"></i> Dashboard
+        <nav class="flex-grow px-8 space-y-4">
+            <button onclick="showSection('dashboard')" id="side-dashboard" class="sidebar-item active w-full p-5 rounded-[24px] flex items-center gap-4 font-bold text-sm">
+                <i class="fas fa-grid-horizontal w-5"></i> DASHBOARD
             </button>
-            <button onclick="showSection('sales')" class="sidebar-item w-full p-4 rounded-xl flex items-center gap-3 font-bold text-sm text-slate-400 hover:bg-white/5">
-                <i class="fas fa-plus w-5"></i> New Booking
+            <button onclick="showSection('sales')" id="side-sales" class="sidebar-item w-full p-5 rounded-[24px] flex items-center gap-4 font-bold text-sm text-slate-400 hover:bg-white/5">
+                <i class="fas fa-plus-circle w-5"></i> NEW BOOKING
             </button>
-            <button onclick="showSection('reports')" class="sidebar-item w-full p-4 rounded-xl flex items-center gap-3 font-bold text-sm text-slate-400 hover:bg-white/5">
-                <i class="fas fa-list w-5"></i> Audit
+            <button onclick="showSection('reports')" id="side-reports" class="sidebar-item w-full p-5 rounded-[24px] flex items-center gap-4 font-bold text-sm text-slate-400 hover:bg-white/5">
+                <i class="fas fa-chart-bar w-5"></i> AUDIT LOGS
             </button>
         </nav>
+        <div class="p-8">
+            <div class="glass-card p-6 border-sky-500/20 text-center">
+                <p class="text-[10px] font-black uppercase text-slate-500 mb-2">ENGINE STATUS</p>
+                <div class="flex items-center justify-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-[11px] font-black text-emerald-400 tracking-wider">LIVE SYNC ACTIVE</span>
+                </div>
+            </div>
+        </div>
     </aside>
 
-    <!-- Main -->
-    <main class="flex-grow p-4 md:p-10 pb-24">
+    <!-- Main Content -->
+    <main class="flex-grow p-6 md:p-14 pb-32">
         
-        <!-- Dashboard -->
-        <section id="dashboard-section" class="max-w-6xl mx-auto space-y-6">
-            <h2 class="text-2xl font-black">Overview</h2>
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="premium-card p-6">
-                    <p class="text-[10px] uppercase font-black text-slate-500 mb-1">Revenue Today</p>
-                    <h3 id="dash-rev" class="text-2xl font-black">₹0</h3>
-                </div>
-                <div class="premium-card p-6 border-b-4 border-sky-500">
-                    <p class="text-[10px] uppercase font-black text-sky-500 mb-1">Bookings</p>
-                    <h3 id="dash-count" class="text-2xl font-black">0</h3>
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="max-w-6xl mx-auto space-y-12">
+            <div class="space-y-4 text-center">
+                <h2 class="text-4xl font-black tracking-tight">System Overview</h2>
+                <p class="text-slate-500 font-semibold uppercase text-xs tracking-[0.3em]">Real-time Intelligence & Performance Metrics</p>
+            </div>
+            
+            <!-- Live Match / Countdown Card -->
+            <div id="live-monitor" class="glass-card p-8 bg-gradient-to-b from-sky-500/10 to-transparent border-sky-500/30">
+                <div class="flex flex-col items-center space-y-4">
+                    <div class="px-4 py-1.5 bg-sky-500/20 text-sky-400 rounded-full text-[10px] font-black tracking-widest uppercase mb-2">
+                        <i class="fas fa-satellite-dish mr-2 animate-pulse"></i> Field Monitor
+                    </div>
+                    <h4 id="live-status-text" class="text-xl font-black text-white">Detecting Field Activity...</h4>
+                    <div class="text-6xl font-black text-white countdown-display" id="live-countdown">00:00</div>
+                    <p id="live-detail-text" class="text-xs text-slate-500 font-bold uppercase tracking-wider">Time remaining in current hour</p>
                 </div>
             </div>
 
-            <div class="premium-card p-6">
-                <h4 class="font-black text-sm uppercase mb-4 text-slate-400">Recent Activity</h4>
-                <div id="recent-list" class="space-y-3"></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card p-8">
+                    <p class="text-[11px] uppercase font-black text-slate-500 mb-2">Today's Total</p>
+                    <h3 id="dash-rev-daily" class="text-4xl font-black text-white">₹0</h3>
+                    <div class="w-12 h-1 bg-sky-500 mx-auto mt-4 rounded-full"></div>
+                </div>
+                <div class="glass-card p-8">
+                    <p class="text-[11px] uppercase font-black text-slate-500 mb-2">Weekly Summary</p>
+                    <h3 id="dash-rev-weekly" class="text-4xl font-black text-white">₹0</h3>
+                    <div class="w-12 h-1 bg-indigo-500 mx-auto mt-4 rounded-full"></div>
+                </div>
+                <div class="glass-card p-8">
+                    <p class="text-[11px] uppercase font-black text-slate-500 mb-2">Monthly Target</p>
+                    <h3 id="dash-rev-monthly" class="text-4xl font-black text-white">₹0</h3>
+                    <div class="w-12 h-1 bg-amber-500 mx-auto mt-4 rounded-full"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="glass-card p-10">
+                    <h4 class="font-black text-sm uppercase mb-8 text-slate-400 tracking-[0.3em]">Goal Tracking</h4>
+                    <div class="space-y-10">
+                        <div class="space-y-4">
+                            <div class="flex justify-between text-xs font-black uppercase">
+                                <span>Monthly Progress</span>
+                                <span id="target-percent" class="text-sky-400">0%</span>
+                            </div>
+                            <div class="h-5 w-full bg-white/5 rounded-full p-1 border border-white/5">
+                                <div id="target-bar" class="h-full bg-gradient-to-r from-sky-600 to-sky-400 rounded-full transition-all duration-1000 shadow-[0_0_20px_rgba(14,165,233,0.4)]" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="bg-sky-500/5 p-6 rounded-[24px] border border-sky-500/10">
+                            <p class="text-xs text-slate-400 leading-relaxed font-bold italic">
+                                "The engine detects high demand for Midnight Slots. Maintaining ₹1200 pricing for 11PM is optimal for conversion."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card p-10">
+                    <h4 class="font-black text-sm uppercase mb-8 text-slate-400 tracking-[0.3em]">Activity Stream</h4>
+                    <div id="recent-list" class="space-y-5"></div>
+                </div>
+            </div>
+            <button onclick="clearLocalStorage()" class="text-[10px] text-slate-600 uppercase font-black hover:text-red-400 transition tracking-widest">Wipe System Memory</button>
+        </section>
+
+        <!-- Booking Section -->
+        <section id="sales-section" class="hidden max-w-5xl mx-auto space-y-10">
+            <div class="glass-card p-10 md:p-16 space-y-16">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Captain Name</label>
+                        <input type="text" id="cust-name" placeholder="Full Name">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black uppercase text-slate-500 tracking-wider">WhatsApp Link</label>
+                        <input type="tel" id="cust-mobile" placeholder="+91">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Field Date</label>
+                        <input type="date" id="sale-date" onchange="window.renderSlots()">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black uppercase text-slate-500 tracking-wider">Settle Account</label>
+                        <input type="text" id="payment-account" placeholder="UPI / Bank / Cash">
+                    </div>
+                </div>
+
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex flex-col items-center mb-10 space-y-3">
+                        <h4 class="text-lg font-black uppercase tracking-widest">Reserve Your Slots</h4>
+                        <div class="flex gap-6 text-[10px] font-black uppercase text-slate-500">
+                            <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/20"></span> Value</span>
+                            <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-500 shadow-lg shadow-amber-500/20"></span> Peak</span>
+                        </div>
+                    </div>
+                    <div id="slots-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+                </div>
+
+                <div class="bg-sky-500/5 p-10 rounded-[40px] border border-sky-500/10 max-w-3xl mx-auto">
+                    <div id="offer-breakdown" class="hidden text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/10 p-4 rounded-2xl mb-10 border border-emerald-500/20">
+                        <i class="fas fa-bolt mr-2"></i> Bulk Booking Incentive Applied
+                    </div>
+                    <div class="flex flex-col items-center space-y-10">
+                        <div class="space-y-4">
+                            <p class="text-[11px] font-black uppercase text-slate-500 tracking-widest">Final Settlement Amount</p>
+                            <div class="flex items-center justify-center">
+                                <span class="text-5xl font-black text-sky-400 mr-2">₹</span>
+                                <input type="number" id="final-total-input" class="manual-amt-input" value="0">
+                            </div>
+                            <p class="text-[10px] text-slate-600 font-bold uppercase tracking-widest italic">Click to edit manually</p>
+                        </div>
+                        <button onclick="saveBooking()" class="w-full md:w-auto px-20 py-6 bg-sky-600 rounded-[28px] font-black uppercase shadow-[0_20px_40px_-10px_rgba(14,165,233,0.5)] hover:bg-sky-500 transition-all active:scale-95 text-xl tracking-tighter">Confirm & Finalize</button>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Booking -->
-        <section id="sales-section" class="hidden max-w-4xl mx-auto space-y-6">
-            <div class="premium-card p-6 md:p-8 space-y-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-[10px] font-black uppercase text-slate-500">Captain Name</label>
-                        <input type="text" id="cust-name" placeholder="Name">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black uppercase text-slate-500">Mobile</label>
-                        <input type="tel" id="cust-mobile" placeholder="Mobile">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black uppercase text-slate-500">Date</label>
-                        <input type="date" id="sale-date" onchange="renderSlots()">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black uppercase text-slate-500">Payment</label>
-                        <select id="payment-to">
-                            <option value="UPI">UPI</option>
-                            <option value="CASH">CASH</option>
-                        </select>
-                    </div>
+        <!-- Audit Section -->
+        <section id="reports-section" class="hidden max-w-6xl mx-auto space-y-10">
+            <div class="glass-card bg-gradient-to-b from-sky-900/10 to-transparent p-12 text-center space-y-8">
+                <div class="space-y-2">
+                    <h3 class="text-2xl font-black uppercase tracking-[0.2em]">Audit Repository</h3>
+                    <p class="text-xs text-slate-500 font-bold uppercase tracking-widest">Consolidated Transactional Analytics</p>
                 </div>
-
-                <div>
-                    <h4 class="text-sm font-black uppercase mb-4">Select Slots (₹1500/hr)</h4>
-                    <div id="slots-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
-                </div>
-
-                <div class="pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div class="text-center md:text-left">
-                        <p class="text-[10px] font-black uppercase text-slate-500">Total Amount</p>
-                        <h2 id="total-display" class="text-4xl font-black text-sky-400">₹0</h2>
-                    </div>
-                    <button onclick="saveBooking()" class="w-full md:w-auto px-12 py-4 bg-sky-600 rounded-xl font-black uppercase shadow-lg hover:bg-sky-500">Confirm Booking</button>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-6">
+                    <input type="date" id="report-filter-date" class="!w-52 !py-4 !text-xs font-black uppercase tracking-widest">
+                    <button onclick="shareDailySummary()" class="w-full md:w-auto bg-emerald-600 hover:bg-emerald-500 px-10 py-4 rounded-[20px] text-xs font-black uppercase tracking-widest flex items-center justify-center gap-4 transition shadow-2xl">
+                        <i class="fab fa-whatsapp text-2xl"></i> Share Summary
+                    </button>
                 </div>
             </div>
-        </section>
 
-        <!-- Audit -->
-        <section id="reports-section" class="hidden max-w-5xl mx-auto">
-            <div class="premium-card overflow-hidden">
-                <table class="w-full text-left">
-                    <thead class="bg-white/5 text-[10px] font-black uppercase text-slate-500">
-                        <tr>
-                            <th class="p-5">Name</th>
-                            <th class="p-5">Date</th>
-                            <th class="p-5">Slots</th>
-                            <th class="p-5 text-right">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="report-body"></tbody>
-                </table>
+            <div class="glass-card overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-center min-w-[1000px]">
+                        <thead class="bg-white/5 text-[11px] font-black uppercase text-slate-500 border-b border-white/5">
+                            <tr>
+                                <th class="p-8">Captain Profile</th>
+                                <th class="p-8">Slot Breakdown</th>
+                                <th class="p-8">Settlement A/C</th>
+                                <th class="p-8">Net Bill</th>
+                                <th class="p-8">Interaction</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-body"></tbody>
+                    </table>
+                </div>
+                <div id="no-reports" class="hidden p-40 text-center opacity-20 font-black uppercase text-sm tracking-[0.8em] italic">
+                    Repository Empty
+                </div>
             </div>
         </section>
 
     </main>
 
-    <!-- Mobile Nav -->
-    <nav class="md:hidden fixed bottom-4 left-4 right-4 bg-slate-800/90 backdrop-blur border border-white/10 h-16 rounded-2xl flex items-center justify-around z-50">
-        <button onclick="showSection('dashboard')" class="text-slate-400"><i class="fas fa-home text-xl"></i></button>
-        <button onclick="showSection('sales')" class="text-slate-400"><i class="fas fa-plus-circle text-xl"></i></button>
-        <button onclick="showSection('reports')" class="text-slate-400"><i class="fas fa-file-alt text-xl"></i></button>
+    <!-- Mobile Navigation -->
+    <nav class="md:hidden fixed bottom-8 left-8 right-8 bg-slate-950/90 backdrop-blur-2xl border border-white/10 h-20 rounded-[30px] flex items-center justify-around z-50 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]">
+        <button onclick="showSection('dashboard')" id="nav-dashboard" class="text-sky-500 p-4"><i class="fas fa-grid text-2xl"></i></button>
+        <button onclick="showSection('sales')" id="nav-sales" class="text-slate-400 p-4"><i class="fas fa-plus-circle text-3xl"></i></button>
+        <button onclick="showSection('reports')" id="nav-reports" class="text-slate-400 p-4"><i class="fas fa-receipt text-2xl"></i></button>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const SLOTS = ["06-07 AM", "07-08 AM", "08-09 AM", "04-05 PM", "05-06 PM", "06-07 PM", "07-08 PM", "08-09 PM", "09-10 PM"];
+        const myFirebaseConfig = {
+            apiKey: "AIzaSyCgNHaZXx3J_HrxPeDbIJKaz1h6LVYEPjo",
+            authDomain: "oxygen-pro-74335.firebaseapp.com",
+            projectId: "oxygen-pro-74335",
+            storageBucket: "oxygen-pro-74335.firebasestorage.app",
+            messagingSenderId: "832418100752",
+            appId: "1:832418100752:web:6491b9a6c406b8eec17c95"
+        };
+
+        const SLOTS_DATA = [
+            { id: "06-07 AM", type: 'value', basePrice: 1000, tag: "Early Bird", start: 6 },
+            { id: "07-08 AM", type: 'value', basePrice: 1000, tag: "Value Deal", start: 7 },
+            { id: "08-09 AM", type: 'std', basePrice: 1400, start: 8 },
+            { id: "04-05 PM", type: 'std', basePrice: 1400, start: 16 },
+            { id: "05-06 PM", type: 'peak', basePrice: 1800, tag: "Peak", start: 17 },
+            { id: "06-07 PM", type: 'peak', basePrice: 1800, tag: "Peak", start: 18 },
+            { id: "07-08 PM", type: 'peak', basePrice: 1800, tag: "Peak", start: 19 },
+            { id: "08-09 PM", type: 'peak', basePrice: 1800, tag: "Peak", start: 20 },
+            { id: "09-10 PM", type: 'std', basePrice: 1400, tag: "Standard", start: 21 },
+            { id: "10-11 PM", type: 'std', basePrice: 1400, tag: "Late Night", start: 22 },
+            { id: "11-12 AM", type: 'value', basePrice: 1200, tag: "Midnight", start: 23 }
+        ];
+
         let transactions = JSON.parse(localStorage.getItem('oxy_local_txns') || "[]");
         let selectedSlots = [];
+        let appliedPromo = null;
         let db, auth, user, appId;
         let isCloud = false;
 
-        // UI Management
+        // Core Countdown & Live Integration Logic
+        const runCountdownEngine = () => {
+            const now = new Date();
+            const hour = now.getHours();
+            const min = now.getMinutes();
+            const sec = now.getSeconds();
+
+            const liveSlot = SLOTS_DATA.find(s => s.start === hour);
+            const nextSlot = SLOTS_DATA.find(s => s.start > hour);
+
+            const display = document.getElementById('live-countdown');
+            const status = document.getElementById('live-status-text');
+            const detail = document.getElementById('live-detail-text');
+
+            if (liveSlot) {
+                const todayStr = now.toISOString().split('T')[0];
+                const isBooked = transactions.some(t => t.date === todayStr && t.slots.includes(liveSlot.id));
+                status.innerText = isBooked ? `Live Game: ${liveSlot.id}` : `Open Field: ${liveSlot.id}`;
+                detail.innerText = isBooked ? "Match in Progress - Time Remaining" : "Slot is Vacant - Time Remaining";
+                const minLeft = 59 - min;
+                const secLeft = 59 - sec;
+                display.innerText = `${minLeft.toString().padStart(2, '0')}:${secLeft.toString().padStart(2, '0')}`;
+            } else if (nextSlot) {
+                status.innerText = `Next Slot: ${nextSlot.id}`;
+                detail.innerText = "Time until next game starts";
+                const hourDiff = nextSlot.start - hour - 1;
+                const minLeft = 59 - min;
+                const secLeft = 59 - sec;
+                display.innerText = `${Math.max(0, hourDiff).toString().padStart(2, '0')}:${minLeft.toString().padStart(2, '0')}:${secLeft.toString().padStart(2, '0')}`;
+            } else {
+                status.innerText = "Field Closed";
+                detail.innerText = "Reopening at 06:00 AM";
+                display.innerText = "00:00:00";
+            }
+        };
+
         window.showSection = (s) => {
             document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active', 'text-white'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.replace('text-sky-500', 'text-slate-400'));
             document.getElementById(s + '-section').classList.remove('hidden');
+            const sideBtn = document.getElementById('side-' + s);
+            if(sideBtn) sideBtn.classList.add('active');
+            const mobileBtn = document.getElementById('nav-' + s);
+            if(mobileBtn) mobileBtn.classList.replace('text-slate-400', 'text-sky-500');
             if(s === 'sales') window.renderSlots();
-            if(s === 'dashboard' || s === 'reports') updateUI();
+            updateUI();
         };
 
         window.renderSlots = () => {
             const date = document.getElementById('sale-date').value;
             const occupied = transactions.filter(t => t.date === date).flatMap(t => t.slots);
             const grid = document.getElementById('slots-grid');
-            grid.innerHTML = SLOTS.map(s => {
-                const isOcc = occupied.includes(s);
-                const isSel = selectedSlots.includes(s);
-                return `<div onclick="toggleSlot('${s}')" class="slot-card ${isOcc ? 'occupied' : (isSel ? 'selected' : '')}">${s}</div>`;
+            grid.innerHTML = SLOTS_DATA.map(s => {
+                const isOcc = occupied.includes(s.id);
+                const isSel = selectedSlots.includes(s.id);
+                const accent = s.type === 'value' ? 'border-emerald-500/30' : (s.type === 'peak' ? 'border-amber-500/30' : 'border-white/5');
+                return `
+                    <div onclick="toggleSlot('${s.id}')" class="slot-card ${isOcc ? 'occupied' : (isSel ? 'selected' : '')} ${accent}">
+                        ${s.tag && !isOcc ? `<span class="value-tag ${s.type === 'peak' ? 'bg-amber-600' : 'bg-emerald-600'}">${s.tag}</span>` : ''}
+                        <span class="text-[12px] font-black">${s.id}</span>
+                        <span class="text-[10px] mt-2 opacity-50 font-bold italic tracking-tight">₹${s.basePrice}</span>
+                    </div>`;
             }).join('');
-            document.getElementById('total-display').innerText = `₹${selectedSlots.length * 1500}`;
+            calculatePrice();
         };
 
         window.toggleSlot = (s) => {
+            const date = document.getElementById('sale-date').value;
+            const occupied = transactions.filter(t => t.date === date).flatMap(t => t.slots);
+            if(occupied.includes(s)) return;
             const idx = selectedSlots.indexOf(s);
             if(idx > -1) selectedSlots.splice(idx, 1);
             else selectedSlots.push(s);
             window.renderSlots();
         };
 
+        const calculatePrice = () => {
+            let subtotal = selectedSlots.reduce((acc, id) => acc + SLOTS_DATA.find(s => s.id === id).basePrice, 0);
+            let discount = 0;
+            if(selectedSlots.length >= 3) {
+                discount = subtotal * 0.10;
+                document.getElementById('offer-breakdown').classList.remove('hidden');
+            } else {
+                document.getElementById('offer-breakdown').classList.add('hidden');
+            }
+            if(appliedPromo === 'O2PRO') discount += (subtotal * 0.10); 
+            const finalTotal = Math.floor(subtotal - discount);
+            document.getElementById('final-total-input').value = finalTotal;
+            return finalTotal;
+        };
+
+        window.applyPromo = () => {
+            const code = document.getElementById('promo-code').value.toUpperCase();
+            if(code === 'O2PRO') { appliedPromo = code; alert("PRO-Code Applied!"); calculatePrice(); }
+            else { alert("Unknown Code."); }
+        };
+
         const updateUI = () => {
-            const today = new Date().toISOString().split('T')[0];
-            const todayTxns = transactions.filter(t => t.date === today);
-            const rev = todayTxns.reduce((a,c) => a + c.total, 0);
-            
-            document.getElementById('dash-rev').innerText = `₹${rev}`;
-            document.getElementById('dash-count').innerText = todayTxns.length;
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+            const daily = transactions.filter(t => t.date === todayStr).reduce((a,c) => a + c.total, 0);
+            const sevenDaysAgo = new Date().setDate(now.getDate() - 7);
+            const weekly = transactions.filter(t => t.timestamp >= sevenDaysAgo).reduce((a,c) => a + c.total, 0);
+            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+            const monthly = transactions.filter(t => t.timestamp >= monthStart).reduce((a,c) => a + c.total, 0);
+
+            document.getElementById('dash-rev-daily').innerText = `₹${daily.toLocaleString()}`;
+            document.getElementById('dash-rev-weekly').innerText = `₹${weekly.toLocaleString()}`;
+            document.getElementById('dash-rev-monthly').innerText = `₹${monthly.toLocaleString()}`;
+
+            const target = 150000;
+            const progress = Math.min((monthly / target) * 100, 100);
+            document.getElementById('target-percent').innerText = `${Math.round(progress)}%`;
+            document.getElementById('target-bar').style.width = `${progress}%`;
 
             const list = document.getElementById('recent-list');
-            list.innerHTML = transactions.slice(-5).reverse().map(t => `
-                <div class="flex justify-between items-center bg-white/5 p-3 rounded-lg text-sm">
-                    <span>${t.name}</span>
-                    <span class="font-bold">₹${t.total}</span>
+            const recent = [...transactions].sort((a,b) => b.timestamp - a.timestamp).slice(0, 4);
+            list.innerHTML = recent.map(t => `<div class="flex justify-between items-center bg-white/5 p-5 rounded-[22px] border-l-2 border-sky-500">
+                <div><p class="font-black text-sm text-white">${t.name}</p><p class="text-[10px] opacity-40 uppercase font-black tracking-widest mt-1">${t.date}</p></div>
+                <div class="text-right">
+                    <span class="font-black text-sky-400">₹${t.total}</span>
+                    <p class="text-[9px] opacity-30 font-bold uppercase">${t.account ? t.account.substring(0,12) : 'DIRECT'}</p>
                 </div>
-            `).join('') || '<p class="text-center text-xs opacity-30 py-4">No records</p>';
+            </div>`).join('') || '<div class="p-10 text-center opacity-20 uppercase tracking-[0.5em] font-black text-xs italic">Awaiting Telemetry</div>';
 
             const report = document.getElementById('report-body');
-            report.innerHTML = transactions.map(t => `
-                <tr class="border-b border-white/5 text-sm">
-                    <td class="p-5 font-bold">${t.name}</td>
-                    <td class="p-5 opacity-60">${t.date}</td>
-                    <td class="p-5 text-[10px] text-sky-400 font-black">${t.slots.join(', ')}</td>
-                    <td class="p-5 text-right font-black">₹${t.total}</td>
-                </tr>
-            `).join('');
+            if(transactions.length === 0) {
+                document.getElementById('no-reports').classList.remove('hidden');
+                report.innerHTML = "";
+            } else {
+                document.getElementById('no-reports').classList.add('hidden');
+                report.innerHTML = [...transactions].sort((a,b) => b.timestamp - a.timestamp).map(t => `<tr class="border-b border-white/5 text-sm hover:bg-white/5 transition">
+                    <td class="p-8">
+                        <p class="font-black text-white">${t.name}</p>
+                        <p class="text-[11px] opacity-50 font-black tracking-widest">${t.mobile || '---'}</p>
+                    </td>
+                    <td class="p-8">
+                        <p class="text-[11px] font-black uppercase text-sky-400 mb-2">${t.slots.join(', ')}</p>
+                        <p class="text-[10px] opacity-40 font-black uppercase">${t.date}</p>
+                    </td>
+                    <td class="p-8">
+                        <span class="bg-white/5 px-4 py-2 rounded-2xl text-[10px] font-black text-slate-400 border border-white/5 uppercase tracking-tighter">${t.account || 'DIRECT'}</span>
+                    </td>
+                    <td class="p-8 font-black text-xl text-white">₹${t.total.toLocaleString()}</td>
+                    <td class="p-8 text-right">
+                        <button onclick="shareReceipt('${t.mobile}', '${t.name}', '${t.date}', '${t.slots.join(', ')}', ${t.total}, '${t.account}')" 
+                                class="bg-sky-500/10 text-sky-400 hover:bg-sky-500 hover:text-white px-6 py-4 rounded-[22px] transition-all text-[11px] font-black uppercase shadow-2xl">
+                            <i class="fab fa-whatsapp text-lg mr-2"></i> RECEIPT
+                        </button>
+                    </td>
+                </tr>`).join('');
+            }
+        };
+
+        window.shareReceipt = (mobile, name, date, slots, total, account) => {
+            const cleanMobile = mobile.replace(/\D/g, '');
+            if(!cleanMobile) return alert("Valid Mobile Required");
+            const accInfo = account ? `%0A💳 *Account:* ${account}` : '';
+            const message = `*Oxygen Pro Elite Cricket Confirmation*%0A%0AHi *${name}*, field is reserved!%0A📅 *Date:* ${date}%0A🕒 *Slots:* ${slots}%0A💰 *Net:* ₹${total}${accInfo}%0A%0A_Sync complete via Oxygen Pro Engine_`;
+            window.open(`https://wa.me/91${cleanMobile}?text=${message}`, '_blank');
+        };
+
+        window.shareDailySummary = () => {
+            const date = document.getElementById('report-filter-date').value;
+            if(!date) return alert("Date Selection Required");
+            const dayTxns = transactions.filter(t => t.date === date);
+            if(dayTxns.length === 0) return alert("No Transactional Data Found");
+            const totalRev = dayTxns.reduce((a,c) => a + c.total, 0);
+            const summary = dayTxns.map(t => `- ${t.name} (₹${t.total})`).join('%0A');
+            const message = `*Oxygen Pro Daily Performance Summary*%0A📅 *Date:* ${date}%0A💰 *Total Revenue:* ₹${totalRev}%0A🏟️ *Field Activity:* ${dayTxns.length} Bookings%0A%0A*Breakdown:*%0A${summary}`;
+            window.open(`https://wa.me/?text=${message}`, '_blank');
         };
 
         window.saveBooking = async () => {
             const name = document.getElementById('cust-name').value;
+            const mobile = document.getElementById('cust-mobile').value;
             const date = document.getElementById('sale-date').value;
-            if(!name || !date || selectedSlots.length === 0) return alert("Fill all details");
-
-            const txn = {
-                name, date, 
-                slots: [...selectedSlots],
-                total: selectedSlots.length * 1500,
-                timestamp: new Date().getTime()
-            };
-
+            const account = document.getElementById('payment-account').value;
+            const finalPrice = parseInt(document.getElementById('final-total-input').value);
+            if(!name || !date || selectedSlots.length === 0) return alert("Fill critical booking fields.");
+            if(isNaN(finalPrice)) return alert("Amount invalid.");
+            const txn = { name, mobile, date, account, slots: [...selectedSlots], total: finalPrice, timestamp: new Date().getTime() };
             if(isCloud && user) {
                 try {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'bookings'), txn);
-                } catch(e) { console.error(e); }
+                    const appIdLocal = typeof __app_id !== 'undefined' ? __app_id : "oxygen-pro-74335";
+                    await addDoc(collection(db, `artifacts/${appIdLocal}/public/data/bookings`), txn);
+                } catch(e) { console.error("Cloud Write Error:", e); }
             }
-
-            // Always save locally for instant feedback
             transactions.push(txn);
             localStorage.setItem('oxy_local_txns', JSON.stringify(transactions));
-            
-            alert("Booking Saved!");
+            alert(`CONFIRMED: Data logged for ${name}.`);
             selectedSlots = [];
             document.getElementById('cust-name').value = "";
+            document.getElementById('cust-mobile').value = "";
+            document.getElementById('payment-account').value = "";
             showSection('dashboard');
         };
 
-        // Initialization
-        const init = async () => {
-            // Cloud Fail-safe timer
-            const cloudTimer = setTimeout(() => {
-                if(!isCloud) {
-                    document.getElementById('mode-indicator').classList.remove('hidden');
-                    document.getElementById('loading-screen').style.opacity = '0';
-                    setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500);
-                    updateUI();
-                }
-            }, 3500);
+        window.clearLocalStorage = () => { if(confirm("Permanently wipe local transactional memory?")) { localStorage.removeItem('oxy_local_txns'); transactions = []; updateUI(); } };
 
+        const init = async () => {
+            setInterval(runCountdownEngine, 1000); 
+            const cloudTimer = setTimeout(() => { if(!isCloud) { document.getElementById('mode-indicator').classList.remove('hidden'); document.getElementById('loading-screen').style.display = 'none'; updateUI(); } }, 4000);
             try {
-                const config = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-                appId = typeof __app_id !== 'undefined' ? __app_id : 'oxygen-pro';
+                const appIdLocal = typeof __app_id !== 'undefined' ? __app_id : "oxygen-pro-74335";
+                appId = appIdLocal;
+                const config = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : myFirebaseConfig;
+                const app = initializeApp(config);
+                auth = getAuth(app); db = getFirestore(app);
                 
-                if(config.apiKey) {
-                    const app = initializeApp(config);
-                    auth = getAuth(app);
-                    db = getFirestore(app);
-                    await signInAnonymously(auth);
-                    
-                    onAuthStateChanged(auth, (u) => {
-                        if(u) {
-                            user = u;
-                            isCloud = true;
-                            clearTimeout(cloudTimer);
-                            document.getElementById('loading-screen').style.display = 'none';
-                            
-                            // Real-time Cloud Sync
-                            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'bookings'), (snap) => {
-                                const cloudData = snap.docs.map(d => d.data());
-                                // Merge cloud data with local if needed
-                                if(cloudData.length > 0) {
-                                    transactions = cloudData;
-                                    updateUI();
-                                }
-                            });
-                        }
-                    });
-                }
-            } catch(e) { console.log("Running in offline mode"); }
+                const initAuth = async () => {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                };
+                
+                await initAuth();
+                onAuthStateChanged(auth, (u) => {
+                    user = u; if(u) {
+                        isCloud = true; clearTimeout(cloudTimer); document.getElementById('loading-screen').style.display = 'none';
+                        onSnapshot(collection(db, `artifacts/${appIdLocal}/public/data/bookings`), (snap) => {
+                            if (!user) return;
+                            transactions = snap.docs.map(d => ({...d.data(), id: d.id}));
+                            localStorage.setItem('oxy_local_txns', JSON.stringify(transactions));
+                            updateUI();
+                        }, (err) => { 
+                            console.error("Firestore Permission Denied. Check Rules."); 
+                        });
+                    }
+                });
+            } catch(e) { console.error("Initialization Error:", e); }
         };
 
         document.getElementById('sale-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('report-filter-date').value = new Date().toISOString().split('T')[0];
         init();
-        showSection('dashboard');
     </script>
 </body>
 </html>
